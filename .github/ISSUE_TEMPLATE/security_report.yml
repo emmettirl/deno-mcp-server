@@ -1,0 +1,89 @@
+name: 🔒 Security Issue
+description: Report a security vulnerability in the Deno MCP Server
+title: "[Security]: "
+labels: ["security", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **Security Issues Should Be Reported Privately**
+
+        If you believe you have found a security vulnerability, please **do not** create a public issue.
+        Instead, please report it privately by emailing the maintainers directly.
+
+        For non-sensitive security-related discussions (like security hardening suggestions), you can use this template.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Security Issue Description
+      description: Describe the security concern (for non-sensitive issues only)
+      placeholder: |
+        Please describe the security issue or improvement suggestion.
+
+        ⚠️ Do not include sensitive details like:
+        - Actual exploit code
+        - Specific vulnerability details
+        - Information that could be used maliciously
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Assessment
+      description: How would you rate the severity of this issue?
+      options:
+        - "Low - Security hardening suggestion"
+        - "Medium - Potential security improvement"
+        - "High - Possible security vulnerability"
+        - "Critical - Definite security vulnerability"
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Potential Impact
+      description: What could be the impact of this security issue?
+      placeholder: |
+        - What systems or data could be affected?
+        - What are the potential consequences?
+        - Who would be impacted?
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Your environment details
+      placeholder: |
+        - OS: [e.g. Windows 11, macOS 13, Ubuntu 22.04]
+        - Deno version: [e.g. 1.40.0]
+        - MCP Server version: [e.g. 1.0.0]
+    validations:
+      required: true
+
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: Suggested Mitigation
+      description: Do you have any suggestions for how to address this issue?
+      placeholder: |
+        - Recommended security measures
+        - Suggested code changes (high-level)
+        - Best practices to implement
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Security Reporting Checklist
+      description: Please confirm the following
+      options:
+        - label: This is NOT a sensitive security vulnerability (those should be reported privately)
+          required: true
+        - label: I have not included exploit code or detailed vulnerability information
+          required: true
+        - label: I understand that security issues are handled with high priority
+          required: true

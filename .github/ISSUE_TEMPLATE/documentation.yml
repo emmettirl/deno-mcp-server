@@ -1,0 +1,98 @@
+name: 📚 Documentation Issue
+description: Report issues with documentation or suggest improvements
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve our documentation! Please provide details about what needs to be fixed or improved.
+
+  - type: dropdown
+    id: doc_type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation needs attention?
+      options:
+        - "README.md"
+        - "API Documentation"
+        - "Configuration Guide"
+        - "Installation Instructions"
+        - "Usage Examples"
+        - "Security Documentation"
+        - "Contributing Guidelines"
+        - "Code Comments"
+        - "Other"
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: Documentation Issue
+      description: What's wrong with the current documentation?
+      placeholder: |
+        - Is something unclear or confusing?
+        - Is information missing?
+        - Are there errors or outdated information?
+        - Are examples not working?
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Location
+      description: Where is this documentation located?
+      placeholder: |
+        - File path: src/README.md
+        - Section: "Getting Started"
+        - Line numbers: 25-30
+        - URL: https://github.com/emmettirl/deno-mcp-server/...
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement
+      description: How would you improve this documentation?
+      placeholder: |
+        - What changes would make it clearer?
+        - What additional information should be included?
+        - How would you restructure it?
+        - What examples would be helpful?
+
+  - type: textarea
+    id: audience
+    attributes:
+      label: Target Audience
+      description: Who would benefit from this documentation improvement?
+      placeholder: |
+        - New users trying to get started
+        - Experienced developers looking for specific features
+        - Contributors wanting to understand the codebase
+        - System administrators deploying the server
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Are you willing to help improve the documentation?
+      options:
+        - label: I'd like to help write or improve this documentation
+          required: false
+        - label: I can provide examples or use cases
+          required: false
+        - label: I can review proposed changes
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context about the documentation issue?
+      placeholder: |
+        - Screenshots of confusing sections
+        - Links to related issues
+        - Examples of good documentation from other projects
