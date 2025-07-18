@@ -1,9 +1,10 @@
 // Test the MCP server manually
-import { DenoMCPServer } from "./server.ts";
+import { DenoMCPServer } from "./src/server.ts";
+import { fmtTool } from "./src/tools/fmt.ts";
 
 console.log("Testing Deno MCP Server...");
 
-const server = new DenoMCPServer();
+const server = new DenoMCPServer([fmtTool]);
 
 const testRequest = {
   jsonrpc: "2.0",

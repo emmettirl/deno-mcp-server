@@ -29,7 +29,10 @@ try {
     console.log("Error:", result.error.message);
   }
 } catch (error) {
-  console.log("Valid request error:", error.message);
+  console.log(
+    "Valid request error:",
+    error instanceof Error ? error.message : String(error),
+  );
 }
 
 // Test 2: Invalid tool call (malicious path)
@@ -57,7 +60,10 @@ try {
     console.log("Blocked with error:", result.error.message);
   }
 } catch (error) {
-  console.log("Malicious request error:", error.message);
+  console.log(
+    "Malicious request error:",
+    error instanceof Error ? error.message : String(error),
+  );
 }
 
 // Test 3: Invalid tool call (null bytes)
@@ -85,7 +91,10 @@ try {
     console.log("Blocked with error:", result.error.message);
   }
 } catch (error) {
-  console.log("Null byte request error:", error.message);
+  console.log(
+    "Null byte request error:",
+    error instanceof Error ? error.message : String(error),
+  );
 }
 
 console.log("\n✅ Integrated security test completed!");

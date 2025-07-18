@@ -21,6 +21,11 @@ export function validateFilePath(filePath: string): string | null {
     return null;
   }
 
+  // Check for command injection patterns
+  if (/[;&|`$()<>]/.test(filePath)) {
+    return null;
+  }
+
   // Normalize path separators
   const normalized = filePath.replace(
     /[/\\]+/g,
@@ -59,6 +64,39 @@ export function validateFilePaths(files: string[]): string[] {
 }
 
 /**
+ * Validate workspace path
+ */
+function validateWorkspace(workspacePath: string): string[] {
+  const errors: string[] = [];
+
+  if (!workspacePath || typeof workspacePath !== "string") {
+    errors.push("workspacePath is required and must be a string");
+  } else if (!validateFilePath(workspacePath)) {
+    errors.push("workspacePath contains invalid characters or patterns");
+  }
+
+  return errors;
+}
+
+/**
+ * Validate file paths array
+ */
+function validateFiles(files: string[]): string[] {
+  const errors: string[] = [];
+
+  if (files && Array.isArray(files) && files.length > 0) {
+    const validFiles = validateFilePaths(files);
+    if (validFiles.length === 0) {
+      errors.push("No valid files provided");
+    } else if (validFiles.length < files.length) {
+      errors.push("Some file paths are invalid");
+    }
+  }
+
+  return errors;
+}
+
+/**
  * Validate tool arguments for common security issues
  */
 export function validateToolArgs(
@@ -67,70 +105,11 @@ export function validateToolArgs(
   const errors: string[] = [];
 
   // Validate workspace path
-  if (!args.workspacePath || typeof args.workspacePath !== "string") {
-    errors.push("workspacePath is required and must be a string");
-  } else if (!validateFilePath(args.workspacePath)) {
-    errors.push("workspacePath contains invalid characters or patterns");
-  }
+  errors.push(...validateWorkspace(args.workspacePath));
 
-  // Validate files array if provided
+  // Validate file paths
   if (args.files) {
-    if (!Array.isArray(args.files)) {
-      errors.push("files must be an array");
-    } else {
-      const validFiles = validateFilePaths(args.files);
-      if (validFiles.length !== args.files.length) {
-        errors.push("Some file paths are invalid");
-      }
-    }
-  }
-
-  // Validate script path for deno_run
-  if (args.script) {
-    if (typeof args.script !== "string") {
-      errors.push("script must be a string");
-    } else if (!validateFilePath(args.script)) {
-      errors.push("script path contains invalid characters or patterns");
-    }
-  }
-
-  // Validate permissions array
-  if (args.permissions) {
-    if (!Array.isArray(args.permissions)) {
-      errors.push("permissions must be an array");
-    } else {
-      const validPermissions = [
-        "--allow-read",
-        "--allow-write",
-        "--allow-net",
-        "--allow-env",
-        "--allow-run",
-        "--allow-ffi",
-        "--allow-hrtime",
-        "--allow-sys",
-      ];
-
-      for (const perm of args.permissions) {
-        if (typeof perm !== "string") {
-          errors.push(`permission must be a string: ${perm}`);
-        } else if (!validPermissions.some((valid) => perm.startsWith(valid))) {
-          errors.push(`invalid permission: ${perm}`);
-        }
-      }
-    }
-  }
-
-  // Validate rules array for linting
-  if (args.rules) {
-    if (!Array.isArray(args.rules)) {
-      errors.push("rules must be an array");
-    } else {
-      for (const rule of args.rules) {
-        if (typeof rule !== "string" || rule.length === 0) {
-          errors.push(`rule must be a non-empty string: ${rule}`);
-        }
-      }
-    }
+    errors.push(...validateFiles(args.files));
   }
 
   return {
