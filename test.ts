@@ -9,7 +9,7 @@ const testRequest = {
   jsonrpc: "2.0",
   id: 1,
   method: "initialize",
-  params: {}
+  params: {},
 };
 
 console.log("Sending initialize request...");
@@ -20,7 +20,7 @@ const listToolsRequest = {
   jsonrpc: "2.0",
   id: 2,
   method: "tools/list",
-  params: {}
+  params: {},
 };
 
 console.log("Sending tools/list request...");
