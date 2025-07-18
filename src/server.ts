@@ -7,6 +7,8 @@ import {
   ToolArgs,
   ToolDefinition,
 } from "./types.ts";
+import { validateToolArgs } from "./validation.ts";
+import { loadConfig as _loadConfig } from "./config.ts";
 
 export class DenoMCPServer {
   private tools: Map<string, MCPTool> = new Map();
@@ -77,9 +79,22 @@ export class DenoMCPServer {
             };
           }
 
-          const result = await handler(
-            (request.params?.arguments || {}) as ToolArgs,
-          );
+          const args = (request.params?.arguments || {}) as ToolArgs;
+
+          // Validate tool arguments for security
+          const validation = validateToolArgs(args);
+          if (!validation.valid) {
+            return {
+              jsonrpc: "2.0",
+              id: request.id,
+              error: {
+                code: -32602,
+                message: `Invalid arguments: ${validation.errors.join(", ")}`,
+              },
+            };
+          }
+
+          const result = await handler(args);
           return {
             jsonrpc: "2.0",
             id: request.id,

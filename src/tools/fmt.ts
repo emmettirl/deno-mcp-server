@@ -2,11 +2,25 @@
 
 import { ToolArgs, ToolDefinition } from "../types.ts";
 import { executeDeno, findWorkspaceRoot } from "../utils.ts";
+import { validateFilePaths, validateToolArgs } from "../validation.ts";
+import { loadConfig } from "../config.ts";
+import { getToolPermissions } from "../permissions.ts";
 
 async function handleDenoFmt(args: ToolArgs): Promise<Record<string, unknown>> {
   const { workspacePath, files, check } = args;
 
   try {
+    // Validate inputs
+    const validation = validateToolArgs(args);
+    if (!validation.valid) {
+      return {
+        content: [{
+          type: "text",
+          text: `Invalid arguments: ${validation.errors.join(", ")}`,
+        }],
+      };
+    }
+
     const workspaceRoot = await findWorkspaceRoot(workspacePath);
     if (!workspaceRoot) {
       return {
@@ -18,15 +32,37 @@ async function handleDenoFmt(args: ToolArgs): Promise<Record<string, unknown>> {
       };
     }
 
+    // Load configuration
+    const config = await loadConfig(workspaceRoot);
+    const fmtConfig = config.tools?.fmt || {};
+
+    // Build args with security-validated paths
     const denoArgs = ["fmt"];
     if (check) {
       denoArgs.push("--check");
     }
 
-    if (files && files.length > 0) {
-      denoArgs.push(...files);
+    // Add configuration options if any
+    if (fmtConfig.options) {
+      denoArgs.push(...fmtConfig.options);
     }
 
+    // Validate and add files
+    if (files && files.length > 0) {
+      const validatedFiles = validateFilePaths(files);
+      if (validatedFiles.length === 0) {
+        return {
+          content: [{
+            type: "text",
+            text: "No valid files provided after security validation.",
+          }],
+        };
+      }
+      denoArgs.push(...validatedFiles);
+    }
+
+    // Get optimized permissions (for future use)
+    const _permissions = getToolPermissions("fmt");
     const result = await executeDeno(denoArgs, workspaceRoot);
 
     let output = `Deno format ${

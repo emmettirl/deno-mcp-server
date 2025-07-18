@@ -2,6 +2,9 @@
 
 import { DenoCommandResult } from "./types.ts";
 
+// Cache for workspace root detection
+const workspaceRootCache: Map<string, string | null> = new Map();
+
 /**
  * Execute a Deno command with the given arguments
  */
@@ -47,6 +50,12 @@ export async function findWorkspaceRoot(
     return null;
   }
 
+  // Check cache first
+  const cached = workspaceRootCache.get(startPath);
+  if (cached !== undefined) {
+    return cached;
+  }
+
   let currentPath = startPath;
 
   while (currentPath !== "/" && currentPath !== "\\") {
@@ -56,11 +65,13 @@ export async function findWorkspaceRoot(
 
       try {
         await Deno.stat(denoJsonPath);
+        workspaceRootCache.set(startPath, currentPath);
         return currentPath;
       } catch {
         // Try .jsonc
         try {
           await Deno.stat(denoJsoncPath);
+          workspaceRootCache.set(startPath, currentPath);
           return currentPath;
         } catch {
           // Continue searching
@@ -77,5 +88,14 @@ export async function findWorkspaceRoot(
     currentPath = parent;
   }
 
+  // Cache the null result
+  workspaceRootCache.set(startPath, null);
   return null;
+}
+
+/**
+ * Clear workspace root cache (useful for testing)
+ */
+export function clearWorkspaceCache(): void {
+  workspaceRootCache.clear();
 }
