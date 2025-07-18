@@ -43,6 +43,10 @@ export async function executeDeno(
 export async function findWorkspaceRoot(
   startPath: string,
 ): Promise<string | null> {
+  if (!startPath || typeof startPath !== "string") {
+    return null;
+  }
+
   let currentPath = startPath;
 
   while (currentPath !== "/" && currentPath !== "\\") {
@@ -66,7 +70,9 @@ export async function findWorkspaceRoot(
       // Continue searching
     }
 
-    const parent = currentPath.split(/[/\\]/).slice(0, -1).join("/");
+    const parent = currentPath.split(/[/\\]/).slice(0, -1).join(
+      Deno.build.os === "windows" ? "\\" : "/",
+    );
     if (parent === currentPath) break;
     currentPath = parent;
   }
