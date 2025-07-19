@@ -275,7 +275,23 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "Creating release $VERSION"
 
+      - name: � Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: packages/vscode-extension/package-lock.json
+
+      - name: �📦 Build VS Code Extension
+        run: |
+          cd packages/vscode-extension
+          npm ci
+          npm run compile
+          npm install -g @vscode/vsce
+          vsce package --out deno-mcp-extension-${{ steps.tag.outputs.VERSION }}.vsix
+
       - name: 📦 Create release
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -289,6 +305,7 @@ jobs:
             - Automated release from CI/CD pipeline
             - All tests passing
             - Security validations complete
+            - VS Code extension included as release asset
 
             ### 🔒 Security
             - Comprehensive security testing completed
@@ -299,8 +316,26 @@ jobs:
             - Compatible with Deno 1.40.0+
 
             ### 📥 Installation
+
+            **Deno MCP Server:**
             ```bash
-            deno run --allow-read --allow-write --allow-run https://raw.githubusercontent.com/emmettirl/deno-mcp-server/v${{ steps.tag.outputs.VERSION }}/src/main.ts
+            deno run --allow-read --allow-write --allow-run https://raw.githubusercontent.com/emmettirl/deno-mcp-server/v${{ steps.tag.outputs.VERSION }}/packages/server/src/main.ts
+            ```
+
+            **VS Code Extension:**
+            Download the `.vsix` file from the release assets and install using:
+            ```bash
+            code --install-extension deno-mcp-extension-${{ steps.tag.outputs.VERSION }}.vsix
             ```
           draft: false
           prerelease: false
+
+      - name: 📎 Upload Extension Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: packages/vscode-extension/deno-mcp-extension-${{ steps.tag.outputs.VERSION }}.vsix
+          asset_name: deno-mcp-extension-${{ steps.tag.outputs.VERSION }}.vsix
+          asset_content_type: application/zip
