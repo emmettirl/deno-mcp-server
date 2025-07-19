@@ -5,7 +5,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import { getMCPConfigPath } from "./pathResolver.ts";
+import { getMCPConfigPath } from "./pathResolver";
 
 /**
  * Save MCP configuration to file

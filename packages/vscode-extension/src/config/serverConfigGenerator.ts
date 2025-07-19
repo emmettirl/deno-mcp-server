@@ -3,7 +3,7 @@
  */
 
 import * as vscode from "vscode";
-import { findMCPServerPath } from "./pathResolver.ts";
+import { findMCPServerPath } from "./pathResolver";
 
 /**
  * Generate the Deno MCP server configuration object

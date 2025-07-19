@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getDenoMCPServerConfig, loadMCPConfig, saveMCPConfig } from "./config/index.ts";
+import { getDenoMCPServerConfig, loadMCPConfig, saveMCPConfig } from "./config/index";
 
 /**
  * MCP Configuration manager class
