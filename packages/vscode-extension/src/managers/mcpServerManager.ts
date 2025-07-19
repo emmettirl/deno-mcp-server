@@ -8,7 +8,9 @@ export class MCPServerManager implements IMCPServerManager {
   private outputChannel: vscode.OutputChannel;
 
   constructor(private context: vscode.ExtensionContext) {
-    this.outputChannel = vscode.window.createOutputChannel("Deno MCP Server");
+    this.outputChannel = vscode.window.createOutputChannel(
+      "Deno MCP Server",
+    );
     this.statusBarItem = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Left,
       100,
@@ -71,11 +73,17 @@ export class MCPServerManager implements IMCPServerManager {
 
     this.updateStatusBar("starting");
     this.outputChannel.clear();
-    this.outputChannel.appendLine(`Starting Deno MCP server: ${serverPath}`);
+    this.outputChannel.appendLine(
+      `Starting Deno MCP server: ${serverPath}`,
+    );
     this.outputChannel.show();
 
     try {
-      this.mcpProcess = spawn(denoPath, ["run", "--allow-all", serverPath], {
+      this.mcpProcess = spawn(denoPath, [
+        "run",
+        "--allow-all",
+        serverPath,
+      ], {
         stdio: ["pipe", "pipe", "pipe"],
       });
 
@@ -88,13 +96,19 @@ export class MCPServerManager implements IMCPServerManager {
       });
 
       this.mcpProcess.on("spawn", () => {
-        this.outputChannel.appendLine("✓ Server process spawned successfully");
+        this.outputChannel.appendLine(
+          "✓ Server process spawned successfully",
+        );
         this.updateStatusBar("running");
-        vscode.window.showInformationMessage("Deno MCP server started!");
+        vscode.window.showInformationMessage(
+          "Deno MCP server started!",
+        );
       });
 
       this.mcpProcess.on("error", (error: Error) => {
-        this.outputChannel.appendLine(`✗ Server error: ${error.message}`);
+        this.outputChannel.appendLine(
+          `✗ Server error: ${error.message}`,
+        );
         this.updateStatusBar("error");
         vscode.window.showErrorMessage(
           `Failed to start Deno MCP server: ${error.message}`,
@@ -106,7 +120,9 @@ export class MCPServerManager implements IMCPServerManager {
         "exit",
         (code: number | null, signal: string | null) => {
           const exitInfo = signal ? `signal ${signal}` : `code ${code}`;
-          this.outputChannel.appendLine(`✗ Server exited with ${exitInfo}`);
+          this.outputChannel.appendLine(
+            `✗ Server exited with ${exitInfo}`,
+          );
 
           if (code !== 0 && code !== null) {
             this.updateStatusBar("error");
@@ -122,7 +138,9 @@ export class MCPServerManager implements IMCPServerManager {
       );
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      this.outputChannel.appendLine(`✗ Failed to spawn server: ${errorMsg}`);
+      this.outputChannel.appendLine(
+        `✗ Failed to spawn server: ${errorMsg}`,
+      );
       this.updateStatusBar("error");
       vscode.window.showErrorMessage(
         `Failed to start Deno MCP server: ${errorMsg}`,

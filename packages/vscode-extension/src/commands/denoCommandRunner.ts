@@ -35,7 +35,9 @@ export class DenoCommandRunner implements IDenoCommandRunner {
 
       process.on("close", (code) => {
         if (code === 0) {
-          this.outputChannel.appendLine(`✓ Command completed successfully`);
+          this.outputChannel.appendLine(
+            `✓ Command completed successfully`,
+          );
           resolve();
         } else {
           this.outputChannel.appendLine(

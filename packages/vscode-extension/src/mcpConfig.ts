@@ -65,17 +65,59 @@ export class MCPConfigurationManager {
     try {
       if (fs.existsSync(configPath)) {
         const configContent = fs.readFileSync(configPath, "utf8");
-        // Handle JSON with comments (jsonc)
-        const cleanJson = configContent.replace(
-          /(\/\*[\s\S]*?\*\/)|(\/\/.*$)/gm,
-          "",
-        );
-        return JSON.parse(cleanJson);
+        this.outputChannel.appendLine(`Loading MCP config from: ${configPath}`);
+
+        // First try to parse as-is (might be valid JSON already)
+        try {
+          return JSON.parse(configContent);
+        } catch (firstParseError) {
+          this.outputChannel.appendLine(
+            `First parse failed, trying to strip comments: ${firstParseError}`,
+          );
+
+          // If that fails, try stripping comments more carefully
+          // Only strip single-line comments that start at the beginning of a line (after whitespace)
+          // and block comments that are on their own lines
+          const cleanJson = configContent
+            .split("\n")
+            .map((line) => {
+              // Remove single-line comments that start the line (after whitespace)
+              const trimmedLine = line.trim();
+              if (trimmedLine.startsWith("//")) {
+                return "";
+              }
+              // Remove trailing single-line comments, but be careful about URLs and strings
+              const commentIndex = line.indexOf("//");
+              if (commentIndex > 0) {
+                const beforeComment = line.substring(0, commentIndex);
+                // Simple heuristic: if we have an even number of quotes before //, it's probably a comment
+                const quoteCount = (beforeComment.match(/"/g) || []).length;
+                if (quoteCount % 2 === 0) {
+                  return beforeComment.trim();
+                }
+              }
+              return line;
+            })
+            .join("\n")
+            // Remove block comments
+            .replace(/\/\*[\s\S]*?\*\//g, "");
+
+          return JSON.parse(cleanJson);
+        }
       }
     } catch (error) {
       this.outputChannel.appendLine(
         `Failed to load MCP config: ${error}`,
       );
+      // Show error to user but don't automatically overwrite their config
+      vscode.window.showErrorMessage(
+        `Failed to parse MCP configuration. Please check the JSON syntax in ${configPath}. The existing file will be preserved.`,
+      );
+      // Return a basic config without overwriting the file
+      return {
+        servers: {},
+        inputs: [],
+      };
     }
 
     return this.createMCPConfig();

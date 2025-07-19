@@ -21,8 +21,9 @@ export function activate(context: vscode.ExtensionContext) {
   mcpServerManager = new MCPServerManager(context);
   denoCommandRunner = new DenoCommandRunner(outputChannel);
 
-  // Setup MCP configuration automatically
+  // Initialize MCP configuration manager and setup if needed
   const mcpConfigManager = new MCPConfigurationManager(context);
+  // Smart setup: only adds deno-mcp-server if not already configured
   mcpConfigManager.setupMCPConfiguration();
 
   // Create managers object for command registry

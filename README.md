@@ -187,6 +187,7 @@ cd packages/vscode-extension && npm run test:coverage
 ## 📖 Documentation
 
 - **[BUILD.md](BUILD.md)** - Comprehensive build instructions
+- **[docs/](docs/)** - Project documentation and plans
 - **[Server Docs](packages/server/)** - MCP server implementation details
 - **[Extension Docs](packages/vscode-extension/)** - VS Code extension guide
 - **[Security Guide](packages/server/docs/security.md)** - Security best
