@@ -36,7 +36,9 @@ async function handleDenoLint(
 
     const result = await executeDeno(denoArgs, workspaceRoot);
 
-    let output = `Deno lint ${fix ? "with fixes" : ""} completed with code: ${result.code}\n\n`;
+    let output = `Deno lint ${
+      fix ? "with fixes" : ""
+    } completed with code: ${result.code}\n\n`;
 
     if (result.stdout) {
       output += `STDOUT:\n${result.stdout}\n\n`;
@@ -62,7 +64,9 @@ async function handleDenoLint(
     return {
       content: [{
         type: "text",
-        text: `Error running deno lint: ${error instanceof Error ? error.message : String(error)}`,
+        text: `Error running deno lint: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       }],
     };
   }
@@ -81,7 +85,8 @@ export const lintTool: ToolDefinition = {
       files: {
         type: "array",
         items: { type: "string" },
-        description: "Specific files to lint (optional, lints all if not specified)",
+        description:
+          "Specific files to lint (optional, lints all if not specified)",
       },
       fix: {
         type: "boolean",

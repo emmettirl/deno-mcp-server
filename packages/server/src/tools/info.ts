@@ -52,7 +52,9 @@ async function handleDenoInfo(
     return {
       content: [{
         type: "text",
-        text: `Error running deno info: ${error instanceof Error ? error.message : String(error)}`,
+        text: `Error running deno info: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       }],
     };
   }
