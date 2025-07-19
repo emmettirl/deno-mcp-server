@@ -59,7 +59,6 @@
     "semiColons": true,
     "singleQuote": false,
     "proseWrap": "preserve",
-    "newLineKind": "lf",
     "include": ["src/", "*.ts", "*.js"],
     "exclude": ["dist/", "node_modules/", "deno-mcp-extension/"]
   },
