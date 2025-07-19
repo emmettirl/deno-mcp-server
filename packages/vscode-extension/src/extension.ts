@@ -70,7 +70,11 @@ class MCPServerManager {
     }
 
     // Fallback to mock server for development/testing
-    const mockServerPath = path.resolve(__dirname, "..", "mock-mcp-server.ts");
+    // Use extension context to get the correct path
+    const mockServerPath = path.join(
+      this.context.extensionPath,
+      "mock-mcp-server.ts",
+    );
     this.outputChannel.appendLine(
       `Using mock server as fallback: ${mockServerPath}`,
     );

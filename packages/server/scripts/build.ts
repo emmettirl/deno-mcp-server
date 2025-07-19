@@ -259,8 +259,9 @@ class BuildRunner {
     cwd?: string,
   ): Promise<void> {
     if (this.options.verbose) {
+      const location = cwd ? `(in ${cwd})` : "";
       console.log(
-        `  Running: ${cmd} ${args.join(" ")} ${cwd ? `(in ${cwd})` : ""}`,
+        `  Running: ${cmd} ${args.join(" ")} ${location}`,
       );
     } else {
       console.log(`  ${name}...`);
@@ -286,7 +287,7 @@ class BuildRunner {
     }
   }
 
-  private showHelp(): void {
+  showHelp(): void {
     console.log(`
 🛠️ Deno MCP Server Build Script
 
@@ -354,7 +355,8 @@ if (import.meta.main) {
     const runner = new BuildRunner(options);
     await runner.run(command);
   } catch (error) {
-    console.error(`❌ Build failed: ${error.message}`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`❌ Build failed: ${errorMessage}`);
     Deno.exit(1);
   }
 }

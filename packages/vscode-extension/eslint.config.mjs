@@ -24,5 +24,6 @@ export default [{
     eqeqeq: "warn",
     "no-throw-literal": "warn",
     semi: "warn",
+    "linebreak-style": ["error", "unix"],
   },
 }];
