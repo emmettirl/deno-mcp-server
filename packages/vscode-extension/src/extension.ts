@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
+import { MCPConfigurationManager } from "./mcpConfig";
 
 // MCP Server manager class
 class MCPServerManager {
@@ -309,6 +310,10 @@ export function activate(context: vscode.ExtensionContext) {
   mcpServerManager = new MCPServerManager(context);
   denoCommandRunner = new DenoCommandRunner(outputChannel);
 
+  // Setup MCP configuration automatically
+  const mcpConfigManager = new MCPConfigurationManager(context);
+  mcpConfigManager.setupMCPConfiguration();
+
   // Register all commands
   const commands = [
     vscode.commands.registerCommand("deno-mcp.format", async () => {
@@ -392,6 +397,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand("deno-mcp.showStatus", () => {
       mcpServerManager.showOutput();
+    }),
+
+    vscode.commands.registerCommand("deno-mcp.configureMCP", async () => {
+      const mcpConfigManager = new MCPConfigurationManager(context);
+      await mcpConfigManager.setupMCPConfiguration();
     }),
   ];
 

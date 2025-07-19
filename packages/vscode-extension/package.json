@@ -75,6 +75,11 @@
         "command": "deno-mcp.stopServer",
         "title": "Stop MCP Server",
         "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.configureMCP",
+        "title": "Configure MCP Integration",
+        "category": "Deno MCP"
       }
     ],
     "configuration": {
