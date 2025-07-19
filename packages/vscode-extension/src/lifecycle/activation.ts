@@ -14,82 +14,82 @@ let globalManagers: ExtensionManagers | null = null;
  * Coordinates manager initialization and setup
  */
 export function activate(context: vscode.ExtensionContext): void {
-  console.log("Deno MCP Extension is now active!");
+    console.log("Deno MCP Extension is now active!");
 
-  // Create output channel
-  const outputChannel = vscode.window.createOutputChannel(
-    OUTPUT_CHANNELS.MAIN,
-  );
-  context.subscriptions.push(outputChannel);
+    // Create output channel
+    const outputChannel = vscode.window.createOutputChannel(
+        OUTPUT_CHANNELS.MAIN,
+    );
+    context.subscriptions.push(outputChannel);
 
-  // Initialize managers
-  const serverManager = new MCPServerManager(context);
-  const commandRunner = new DenoCommandRunner(outputChannel);
-  const configManager = new MCPConfigurationManager(context);
+    // Initialize managers
+    const serverManager = new MCPServerManager(context);
+    const commandRunner = new DenoCommandRunner(outputChannel);
+    const configManager = new MCPConfigurationManager(context);
 
-  // Setup MCP configuration automatically
-  configManager.setupMCPConfiguration();
+    // Setup MCP configuration automatically
+    configManager.setupMCPConfiguration();
 
-  // Create managers container
-  const managers: ExtensionManagers = {
-    serverManager,
-    commandRunner,
-    configManager,
-    outputChannel,
-  };
+    // Create managers container
+    const managers: ExtensionManagers = {
+        serverManager,
+        commandRunner,
+        configManager,
+        outputChannel,
+    };
 
-  // Store global reference for deactivation
-  globalManagers = managers;
+    // Store global reference for deactivation
+    globalManagers = managers;
 
-  // Register all commands
-  const commandRegistry = new CommandRegistry(context, managers);
-  commandRegistry.registerAllCommands();
+    // Register all commands
+    const commandRegistry = new CommandRegistry(context, managers);
+    commandRegistry.registerAllCommands();
 
-  // Setup event listeners
-  setupEventListeners(context, commandRunner);
+    // Setup event listeners
+    setupEventListeners(context, commandRunner);
 
-  outputChannel.appendLine("Deno MCP Extension activated successfully");
+    outputChannel.appendLine("Deno MCP Extension activated successfully");
 }
 
 /**
  * Extension deactivation logic
  */
 export function deactivate(): void {
-  // Properly cleanup server if it's running
-  if (globalManagers?.serverManager) {
-    globalManagers.serverManager.stopServer();
-  }
-  globalManagers = null;
-  console.log("Deno MCP Extension deactivated");
+    // Properly cleanup server if it's running
+    if (globalManagers?.serverManager) {
+        globalManagers.serverManager.stopServer();
+    }
+    globalManagers = null;
+    console.log("Deno MCP Extension deactivated");
 }
 
 /**
  * Setup extension event listeners
  */
 function setupEventListeners(
-  context: vscode.ExtensionContext,
-  commandRunner: DenoCommandRunner,
+    context: vscode.ExtensionContext,
+    commandRunner: DenoCommandRunner,
 ): void {
-  // Auto-format on save if enabled
-  const onSaveDisposable = vscode.workspace.onDidSaveTextDocument(
-    async (document) => {
-      const config = vscode.workspace.getConfiguration("deno-mcp");
-      if (
-        config.get<boolean>(
-          "enableAutoFormat",
-          CONFIG_DEFAULTS.ENABLE_AUTO_FORMAT,
-        )
-      ) {
-        if (
-          document.languageId === "typescript" ||
-          document.languageId === "javascript"
-        ) {
-          await commandRunner.format(document.uri.fsPath);
-          // Note: Auto-reloading after format would require additional handling
-        }
-      }
-    },
-  );
+    // Auto-format on save if enabled
+    const onSaveDisposable = vscode.workspace.onDidSaveTextDocument(
+        async (document) => {
+            const config = vscode.workspace.getConfiguration("deno-mcp");
+            if (
+                config.get<boolean>(
+                    "enableAutoFormat",
+                    CONFIG_DEFAULTS.ENABLE_AUTO_FORMAT,
+                )
+            ) {
+                if (
+                    document.languageId === "typescript" ||
+                    document.languageId === "javascript"
+                ) {
+                    await commandRunner.format(document.uri.fsPath);
+                    // Note: Auto-reloading after format would require additional handling
+                }
+            }
+        },
+    );
 
-  context.subscriptions.push(onSaveDisposable);
+    context.subscriptions.push(onSaveDisposable);
 }

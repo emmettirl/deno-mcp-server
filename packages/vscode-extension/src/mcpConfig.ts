@@ -127,11 +127,25 @@ export class MCPConfigurationManager {
       // For stdio mode, we need the Deno executable and the server script
       const denoPath = config.get<string>("denoPath", "deno");
       const serverPath = this.findMCPServerPath();
+      const args = ["run", "--allow-all", serverPath];
+
+      // If using CLI entry point, add workspace argument
+      if (serverPath.endsWith("cli.ts")) {
+        // Try to determine workspace root
+        const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri
+          .fsPath;
+        if (workspaceRoot) {
+          args.push("--workspace", workspaceRoot);
+          this.outputChannel.appendLine(
+            `Adding workspace argument: ${workspaceRoot}`,
+          );
+        }
+      }
 
       return {
         type: "stdio",
         command: denoPath,
-        args: ["run", "--allow-all", serverPath],
+        args: args,
         gallery: false,
       };
     }

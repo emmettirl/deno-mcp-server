@@ -13,7 +13,26 @@ import { findWorkspaceRoot } from "./utils.ts";
 
 export async function main() {
   // Load configuration
-  const workspaceRoot = await findWorkspaceRoot(Deno.cwd());
+  // Check for workspace path from environment variable first (set by CLI)
+  const envWorkspace = Deno.env.get("DENO_MCP_WORKSPACE");
+  let workspaceRoot: string | null = null;
+
+  if (envWorkspace) {
+    // Use explicitly provided workspace path
+    try {
+      await Deno.stat(envWorkspace);
+      workspaceRoot = envWorkspace;
+      console.error(`Using workspace from environment: ${workspaceRoot}`);
+    } catch {
+      console.error(`Warning: Specified workspace path does not exist: ${envWorkspace}`);
+    }
+  }
+
+  // If no explicit workspace or it doesn't exist, try to find it
+  if (!workspaceRoot) {
+    workspaceRoot = await findWorkspaceRoot(Deno.cwd());
+  }
+
   if (!workspaceRoot) {
     console.error("Could not find workspace root");
     Deno.exit(1);
