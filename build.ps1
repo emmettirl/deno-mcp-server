@@ -104,7 +104,8 @@ function Format-Code {
     
     if (-not $ExtOnly) {
         # Format all Deno/TypeScript files from root (includes server package and root files)
-        Invoke-BuildCommand "Deno format (all)" "deno" @("fmt") "."
+        # Both root and server now use the same formatting rules
+        Invoke-BuildCommand "Deno format" "deno" @("fmt") "."
     }
     
     if (-not $ServerOnly) {

@@ -91,9 +91,7 @@ class PackageVerifier {
       this.results.push({
         name: "Configuration Files",
         passed: false,
-        message: `Error reading config: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+        message: `Error reading config: ${error instanceof Error ? error.message : String(error)}`,
       });
     }
   }
@@ -160,17 +158,13 @@ class PackageVerifier {
       this.results.push({
         name: "CLI Interface",
         passed: hasHelpOutput,
-        message: hasHelpOutput
-          ? "CLI help working"
-          : "CLI help not working properly",
+        message: hasHelpOutput ? "CLI help working" : "CLI help not working properly",
       });
     } catch (error) {
       this.results.push({
         name: "CLI Interface",
         passed: false,
-        message: `Error testing CLI: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+        message: `Error testing CLI: ${error instanceof Error ? error.message : String(error)}`,
       });
     }
   }
@@ -201,9 +195,7 @@ class PackageVerifier {
       this.results.push({
         name: "Build Process",
         passed: false,
-        message: `Error testing build: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+        message: `Error testing build: ${error instanceof Error ? error.message : String(error)}`,
       });
     }
   }
@@ -244,9 +236,7 @@ class PackageVerifier {
       this.results.push({
         name: "Docker Build",
         passed: false,
-        message: `Error testing Docker: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+        message: `Error testing Docker: ${error instanceof Error ? error.message : String(error)}`,
       });
     }
   }
@@ -261,9 +251,7 @@ class PackageVerifier {
     for (const result of this.results) {
       const icon = result.passed ? "✅" : "❌";
       console.log(
-        `${icon} ${result.name}: ${
-          result.message || (result.passed ? "PASS" : "FAIL")
-        }`,
+        `${icon} ${result.name}: ${result.message || (result.passed ? "PASS" : "FAIL")}`,
       );
 
       if (result.passed) {

@@ -258,12 +258,7 @@ await server.run();
 ### Custom Tool Selection
 
 ```typescript
-import {
-  DenoMCPServer,
-  fmtTool,
-  lintTool,
-  testTool,
-} from "@emmettirl/deno-mcp-server";
+import { DenoMCPServer, fmtTool, lintTool, testTool } from "@emmettirl/deno-mcp-server";
 
 const server = new DenoMCPServer([fmtTool, lintTool, testTool]);
 await server.run();

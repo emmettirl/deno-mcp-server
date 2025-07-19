@@ -50,16 +50,10 @@ deno task build
 
 ```typescript
 // Import in your Deno project
-import {
-  allTools,
-  DenoMCPServer,
-} from "https://deno.land/x/deno_mcp_server/mod.ts";
+import { allTools, DenoMCPServer } from "https://deno.land/x/deno_mcp_server/mod.ts";
 
 // Or import specific tools
-import {
-  fmtTool,
-  lintTool,
-} from "https://deno.land/x/deno_mcp_server/src/tools/index.ts";
+import { fmtTool, lintTool } from "https://deno.land/x/deno_mcp_server/src/tools/index.ts";
 
 // Create and run server
 const server = new DenoMCPServer([fmtTool, lintTool]);

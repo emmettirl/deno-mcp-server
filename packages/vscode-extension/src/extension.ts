@@ -23,12 +23,8 @@ class MCPServerManager {
   }
 
   private updateStatusBar(running: boolean) {
-    this.statusBarItem.text = `$(${
-      running ? "check" : "circle-slash"
-    }) Deno MCP`;
-    this.statusBarItem.tooltip = `Deno MCP Server: ${
-      running ? "Running" : "Stopped"
-    }`;
+    this.statusBarItem.text = `$(${running ? "check" : "circle-slash"}) Deno MCP`;
+    this.statusBarItem.tooltip = `Deno MCP Server: ${running ? "Running" : "Stopped"}`;
     this.statusBarItem.backgroundColor = running
       ? undefined
       : new vscode.ThemeColor("statusBarItem.warningBackground");

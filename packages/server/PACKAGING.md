@@ -77,10 +77,7 @@ deno-mcp-server --workspace /path/to/your/project
 ### As a Library
 
 ```typescript
-import {
-  allTools,
-  DenoMCPServer,
-} from "https://deno.land/x/deno_mcp_server/mod.ts";
+import { allTools, DenoMCPServer } from "https://deno.land/x/deno_mcp_server/mod.ts";
 
 const server = new DenoMCPServer(allTools);
 await server.run();

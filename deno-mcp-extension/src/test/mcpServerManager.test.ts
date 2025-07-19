@@ -162,12 +162,8 @@ suite("MCP Server Manager Tests", () => {
   suite("Status Management", () => {
     test("Should update status correctly for running state", () => {
       const isRunning = true;
-      const expectedText = `$(${
-        isRunning ? "check" : "circle-slash"
-      }) Deno MCP`;
-      const expectedTooltip = `Deno MCP Server: ${
-        isRunning ? "Running" : "Stopped"
-      }`;
+      const expectedText = `$(${isRunning ? "check" : "circle-slash"}) Deno MCP`;
+      const expectedTooltip = `Deno MCP Server: ${isRunning ? "Running" : "Stopped"}`;
 
       assert.strictEqual(
         expectedText,
@@ -183,12 +179,8 @@ suite("MCP Server Manager Tests", () => {
 
     test("Should update status correctly for stopped state", () => {
       const isRunning = false;
-      const expectedText = `$(${
-        isRunning ? "check" : "circle-slash"
-      }) Deno MCP`;
-      const expectedTooltip = `Deno MCP Server: ${
-        isRunning ? "Running" : "Stopped"
-      }`;
+      const expectedText = `$(${isRunning ? "check" : "circle-slash"}) Deno MCP`;
+      const expectedTooltip = `Deno MCP Server: ${isRunning ? "Running" : "Stopped"}`;
 
       assert.strictEqual(
         expectedText,

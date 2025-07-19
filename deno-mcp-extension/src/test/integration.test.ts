@@ -35,9 +35,7 @@ suite("Integration Tests", () => {
   suite("Command Integration", () => {
     test("Should execute commands without immediate errors", async () => {
       const commands = await vscode.commands.getCommands(true);
-      const denoCommands = commands.filter((cmd) =>
-        cmd.startsWith("deno-mcp.")
-      );
+      const denoCommands = commands.filter((cmd) => cmd.startsWith("deno-mcp."));
 
       assert.ok(
         denoCommands.length > 0,
@@ -55,9 +53,7 @@ suite("Integration Tests", () => {
 
     test("Should handle command palette integration", async () => {
       const commands = await vscode.commands.getCommands(true);
-      const denoCommands = commands.filter((cmd) =>
-        cmd.startsWith("deno-mcp.")
-      );
+      const denoCommands = commands.filter((cmd) => cmd.startsWith("deno-mcp."));
 
       // Verify commands are accessible via command palette
       assert.ok(

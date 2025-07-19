@@ -67,10 +67,7 @@ deno install --allow-read --allow-run --allow-write --name deno-mcp-server \
 
 ```typescript
 // Import in your Deno project
-import {
-  allTools,
-  DenoMCPServer,
-} from "https://deno.land/x/deno_mcp_server/mod.ts";
+import { allTools, DenoMCPServer } from "https://deno.land/x/deno_mcp_server/mod.ts";
 
 const server = new DenoMCPServer(allTools);
 await server.run();
