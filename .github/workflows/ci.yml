@@ -2,18 +2,25 @@ name: 🔍 CI/CD Pipeline
 
 on:
   push:
-    branches: [master, main]
+    branches: [master, main, extension]
   pull_request:
-    branches: [master, main]
+    branches: [master, main, extension]
+
+env:
+  FORCE_COLOR: 1
 
 jobs:
-  test:
-    name: 🧪 Test
+  test-server:
+    name: � Test Server Package
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         deno-version: [1.40.0, 1.41.0, latest]
+
+    defaults:
+      run:
+        working-directory: packages/server
 
     steps:
       - name: 📥 Checkout code
@@ -28,24 +35,93 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/deno
-          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.json') }}
+          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.json', '**/deno.lock') }}
           restore-keys: |
             ${{ runner.os }}-deno-
 
       - name: 🔍 Lint code
         run: deno lint
 
+      - name: 📝 Check formatting
+        run: deno fmt --check
+
       - name: 🏗️ Type check
-        run: deno check src/main.ts
+        run: |
+          deno check src/main.ts
+          deno check mod.ts
 
       - name: 🧪 Run tests
-        run: deno test --allow-read --allow-write --allow-run --coverage
+        run: deno test --allow-all --coverage
 
       - name: 🔒 Security tests
         run: |
           deno run --allow-read --allow-write test-security.ts
           deno run --allow-read --allow-write --allow-run test-integration.ts
           deno run --allow-read --allow-write --allow-run test-final.ts
+
+  test-extension:
+    name: 🎯 Test VS Code Extension
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/vscode-extension
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: packages/vscode-extension/package-lock.json
+
+      - name: 📋 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Lint code
+        run: npm run lint
+
+      - name: 🏗️ Type check
+        run: npm run check-types
+
+      - name: 🧪 Run tests
+        run: xvfb-run -a npm test
+
+      - name: 📦 Test build
+        run: npm run compile
+
+  build-monorepo:
+    name: 🏗️ Build Monorepo
+    runs-on: windows-latest
+    needs: [test-server, test-extension]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🦕 Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: packages/vscode-extension/package-lock.json
+
+      - name: 📋 Install extension dependencies
+        run: |
+          cd packages/vscode-extension
+          npm ci
+
+      - name: 🏗️ Build with PowerShell script
+        run: .\build.ps1 all -ShowVerbose
+        shell: pwsh
 
       - name: 📊 Generate coverage report
         run: deno coverage --lcov coverage > coverage.lcov
