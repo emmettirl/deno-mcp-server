@@ -56,5 +56,5 @@ LABEL \
     org.opencontainers.image.description="A secure Model Context Protocol server for Deno development workflows" \
     org.opencontainers.image.url="https://github.com/emmettirl/deno-mcp-server" \
     org.opencontainers.image.source="https://github.com/emmettirl/deno-mcp-server" \
-    org.opencontainers.image.vendor="Emmett O'Brien" \
+    org.opencontainers.image.vendor="Emmett Fitzharris" \
     org.opencontainers.image.licenses="MIT"

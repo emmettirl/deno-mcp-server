@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "name": "Server Package",
+      "path": "./packages/server"
+    },
+    {
+      "name": "VS Code Extension",
+      "path": "./packages/vscode-extension"
+    }
+  ],
+  "settings": {
+    "deno.enable": true,
+    "deno.enablePaths": ["./packages/server"],
+    "deno.disablePaths": ["./packages/vscode-extension"],
+    "typescript.preferences.includePackageJsonAutoImports": "auto",
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/out": true,
+      "**/.vscode-test": true
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "denoland.vscode-deno",
+      "ms-vscode.vscode-typescript-next"
+    ]
+  }
+}

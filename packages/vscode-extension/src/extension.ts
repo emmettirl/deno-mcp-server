@@ -39,22 +39,22 @@ class MCPServerManager {
       return configPath;
     }
 
-    // Auto-detect: try parent directory for the packaged MCP server
-    const parentModPath = path.resolve(__dirname, "..", "..", "mod.ts");
-    const parentMainPath = path.resolve(__dirname, "..", "..", "main.ts");
+    // Auto-detect: try server package for the packaged MCP server
+    const serverModPath = path.resolve(__dirname, "..", "..", "server", "mod.ts");
+    const serverMainPath = path.resolve(__dirname, "..", "..", "server", "main.ts");
 
     try {
       const fs = require("fs");
-      if (fs.existsSync(parentModPath)) {
+      if (fs.existsSync(serverModPath)) {
         this.outputChannel.appendLine(
-          `Using packaged MCP server: ${parentModPath}`,
+          `Using packaged MCP server: ${serverModPath}`,
         );
-        return parentModPath;
-      } else if (fs.existsSync(parentMainPath)) {
+        return serverModPath;
+      } else if (fs.existsSync(serverMainPath)) {
         this.outputChannel.appendLine(
-          `Using packaged MCP server (main.ts): ${parentMainPath}`,
+          `Using packaged MCP server (main.ts): ${serverMainPath}`,
         );
-        return parentMainPath;
+        return serverMainPath;
       }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
