@@ -41,6 +41,47 @@ principles and enterprise-grade features.
 
 ## 🚀 Quick Start
 
+### Installation Methods
+
+#### Method 1: Global Installation (Recommended)
+
+```bash
+# Install from source
+git clone https://github.com/emmettirl/deno-mcp-server.git
+cd deno-mcp-server
+deno task install
+
+# Now you can use it globally
+deno-mcp-server --help
+```
+
+#### Method 2: Direct URL Installation
+
+```bash
+# Install directly from GitHub
+deno install --allow-read --allow-run --allow-write --name deno-mcp-server \
+  https://raw.githubusercontent.com/emmettirl/deno-mcp-server/main/cli.ts
+```
+
+#### Method 3: Use as Library
+
+```typescript
+// Import in your Deno project
+import { DenoMCPServer, allTools } from "https://deno.land/x/deno_mcp_server/mod.ts";
+
+const server = new DenoMCPServer(allTools);
+await server.run();
+```
+
+#### Method 4: Compiled Binary
+
+```bash
+git clone https://github.com/emmettirl/deno-mcp-server.git
+cd deno-mcp-server
+deno task build
+# Binary available at ./dist/deno-mcp-server
+```
+
 ### Prerequisites
 
 - [Deno](https://deno.land/) 1.40.0 or later
@@ -62,18 +103,46 @@ deno run --allow-read --allow-write --allow-run src/main.ts
 
 ### Basic Usage
 
+#### As MCP Server
+
+Configure in your MCP client (e.g., Claude Desktop):
+
+```json
+{
+  "mcpServers": {
+    "deno-tools": {
+      "command": "deno-mcp-server",
+      "args": ["--workspace", "/path/to/your/deno/project"]
+    }
+  }
+}
+```
+
+#### Command Line Interface
+
 ```bash
-# Format code in current directory
-deno run --allow-read --allow-write src/main.ts fmt .
+# Start MCP server
+deno-mcp-server
 
-# Lint specific files
-deno run --allow-read --allow-write src/main.ts lint src/main.ts
+# With custom workspace
+deno-mcp-server --workspace /path/to/project
 
-# Run tests with coverage
-deno run --allow-read --allow-write --allow-run src/main.ts test --coverage
+# With debug output
+deno-mcp-server --debug
 
-# Type check files
-deno run --allow-read --allow-write src/main.ts check src/
+# Show help
+deno-mcp-server --help
+```
+
+#### Programmatic Usage
+
+```typescript
+import { DenoMCPServer } from "./src/server.ts";
+import { fmtTool, lintTool } from "./src/tools/index.ts";
+
+// Create server with specific tools
+const server = new DenoMCPServer([fmtTool, lintTool]);
+await server.run();
 ```
 
 ## 🔧 Configuration
@@ -104,7 +173,69 @@ Create a `deno.json` file in your project root:
 }
 ```
 
-## 🛡️ Security
+## � Package Structure
+
+The Deno MCP Server is designed to be easily importable and customizable:
+
+### Module Exports
+
+```typescript
+// Import everything
+import * as DenoMCP from "https://deno.land/x/deno_mcp_server/mod.ts";
+
+// Import specific components
+import { 
+  DenoMCPServer, 
+  allTools, 
+  fmtTool, 
+  lintTool 
+} from "https://deno.land/x/deno_mcp_server/mod.ts";
+
+// Import types
+import type { 
+  ToolDefinition, 
+  MCPRequest, 
+  MCPResponse 
+} from "https://deno.land/x/deno_mcp_server/mod.ts";
+```
+
+### Available Exports
+
+- **Core**: `DenoMCPServer`, `main`, `cli`
+- **Tools**: `allTools`, `fmtTool`, `lintTool`, `checkTool`, `testTool`, `runTool`, `infoTool`
+- **Tool Groups**: `formattingTools`, `validationTools`, `testingTools`, `executionTools`, `infoTools`
+- **Utilities**: `executeDeno`, `findWorkspaceRoot`, `loadConfig`
+- **Validation**: `validateToolArgs`, `validateFilePaths`
+- **Types**: `ToolDefinition`, `MCPRequest`, `MCPResponse`, `ToolArgs`
+
+### Custom Tool Creation
+
+```typescript
+import { ToolDefinition } from "https://deno.land/x/deno_mcp_server/mod.ts";
+
+const customTool: ToolDefinition = {
+  name: "my-custom-tool",
+  description: "My custom development tool",
+  inputSchema: {
+    type: "object",
+    properties: {
+      workspacePath: { type: "string" },
+      customArg: { type: "string" }
+    }
+  },
+  handler: async (args) => {
+    // Your tool implementation
+    return {
+      content: [{
+        type: "text",
+        text: "Tool executed successfully"
+      }]
+    };
+  }
+};
+```
+
+## �🛡️ Security
 
 Security is our top priority. This project includes:
 

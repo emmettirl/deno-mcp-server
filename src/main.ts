@@ -9,10 +9,9 @@ import { checkTool } from "./tools/check.ts";
 import { testTool } from "./tools/test.ts";
 import { runTool } from "./tools/run.ts";
 import { infoTool } from "./tools/info.ts";
-import { loadConfig } from "./config.ts";
 import { findWorkspaceRoot } from "./utils.ts";
 
-async function main() {
+export async function main() {
   // Load configuration
   const workspaceRoot = await findWorkspaceRoot(Deno.cwd());
   if (!workspaceRoot) {
@@ -20,7 +19,8 @@ async function main() {
     Deno.exit(1);
   }
 
-  const _config = await loadConfig(workspaceRoot);
+  // Load configuration (for future use in tool filtering)
+  // const config = await loadConfig(workspaceRoot);
 
   // All tools are enabled by default (no filtering for now)
   const tools = [

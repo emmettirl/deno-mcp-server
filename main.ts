@@ -1,8 +1,10 @@
-export function add(a: number, b: number): number {
-  return a + b;
-}
+#!/usr/bin/env deno run --allow-read --allow-run --allow-write
 
-// Learn more at https://docs.deno.com/runtime/manual/examples/module_metadata#concepts
+// Main entry point - delegates to src/main.ts
+export * from "./src/main.ts";
+
+// Run the server if this is the main module
 if (import.meta.main) {
-  console.log("Add 2 + 3 =", add(2, 3));
+  const { main } = await import("./src/main.ts");
+  await main();
 }

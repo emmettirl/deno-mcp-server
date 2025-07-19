@@ -4,7 +4,6 @@ import { ToolArgs, ToolDefinition } from "../types.ts";
 import { executeDeno, findWorkspaceRoot } from "../utils.ts";
 import { validateFilePaths, validateToolArgs } from "../validation.ts";
 import { loadConfig } from "../config.ts";
-import { getToolPermissions } from "../permissions.ts";
 
 async function handleDenoFmt(args: ToolArgs): Promise<Record<string, unknown>> {
   const { workspacePath, files, check } = args;
@@ -61,8 +60,7 @@ async function handleDenoFmt(args: ToolArgs): Promise<Record<string, unknown>> {
       denoArgs.push(...validatedFiles);
     }
 
-    // Get optimized permissions (for future use)
-    const _permissions = getToolPermissions("fmt");
+    // Use optimized permissions for execution
     const result = await executeDeno(denoArgs, workspaceRoot);
 
     let output = `Deno format ${

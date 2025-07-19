@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  deno-mcp-server:
+    build: .
+    container_name: deno-mcp-server
+    volumes:
+      # Mount your workspace
+      - ./workspace:/data:ro
+      # Mount config if needed
+      - ./deno.json:/app/deno.json:ro
+    environment:
+      - DENO_MCP_DEBUG=false
+      - DENO_MCP_WORKSPACE=/data
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    
+  # Development version with live reload
+  deno-mcp-server-dev:
+    image: denoland/deno:alpine-1.40.0
+    container_name: deno-mcp-server-dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ./workspace:/data
+    environment:
+      - DENO_MCP_DEBUG=true
+      - DENO_MCP_WORKSPACE=/data
+    command: deno run --watch --allow-read --allow-write --allow-run src/main.ts
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+networks:
+  default:
+    name: deno-mcp-network
