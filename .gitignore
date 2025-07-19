@@ -4,7 +4,7 @@ npm-debug.log*
 
 # Deno
 .deno/
-packages/server/deno.lock
+# Note: deno.lock is tracked for Deno 2.x compatibility
 
 # Build outputs
 dist/

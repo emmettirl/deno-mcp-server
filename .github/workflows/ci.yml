@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        deno-version: [1.41.0, 1.46.3, 2.0.0, 2.1.0, latest]
+        deno-version: [2.0.0, 2.1.0, latest]
 
     defaults:
       run:
@@ -203,7 +203,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        deno-version: [1.46.3, 2.0.0, latest]
+        deno-version: [2.0.0, latest]
 
     defaults:
       run:
