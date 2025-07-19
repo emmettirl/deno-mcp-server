@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        deno-version: [1.40.0, 1.41.0, latest]
+        deno-version: [1.41.0, 1.46.3, 2.0.0, 2.1.0, latest]
 
     defaults:
       run:
@@ -105,7 +105,7 @@ jobs:
       - name: 🦕 Setup Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: 2.x
 
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
@@ -144,7 +144,7 @@ jobs:
       - name: 🦕 Setup Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: latest
+          deno-version: 2.x
 
       - name: 🎨 Check formatting
         run: deno fmt --check
@@ -183,7 +183,7 @@ jobs:
       - name: 🦕 Setup Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: latest
+          deno-version: 2.x
 
       - name: 📚 Generate documentation
         run: |
@@ -203,7 +203,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        deno-version: [1.40.0, latest]
+        deno-version: [1.46.3, 2.0.0, latest]
 
     defaults:
       run:
@@ -239,7 +239,7 @@ jobs:
       - name: 🦕 Setup Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: latest
+          deno-version: 2.x
 
       - name: ⚡ Performance tests
         run: |
@@ -262,7 +262,7 @@ jobs:
       - name: 🦕 Setup Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: latest
+          deno-version: 2.x
 
       - name: 🏷️ Create release tag
         id: tag
