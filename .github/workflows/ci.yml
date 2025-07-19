@@ -14,7 +14,7 @@ env:
 
 jobs:
   test-server:
-    name: � Test Server Package
+    name: 🧪 Test Server Package
     runs-on: ubuntu-latest
 
     strategy:
@@ -96,7 +96,7 @@ jobs:
       - name: 📦 Test build
         run: npm run compile
 
-  build-monorepo:
+  build-artifacts:
     name: 🏗️ Build Artifacts
     runs-on: windows-latest
     needs: [test-server, test-extension, performance, format, security, docs]
@@ -203,12 +203,12 @@ jobs:
         run: |
           echo "Running performance tests..."
           # Add performance benchmarks here
-          time deno run --allow-read --allow-write --allow-run src/main.ts --version || echo "Version check"
+          time deno run --allow-read --allow-write --allow-run packages/server/src/main.ts --version || echo "Version check"
 
   release:
     name: 🚀 Release
     runs-on: ubuntu-latest
-    needs: [build-monorepo]
+    needs: [build-artifacts]
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
 
     steps:
@@ -230,20 +230,26 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "Creating release $VERSION"
 
-      - name: � Setup Node.js
-        uses: actions/setup-node@v4
+      - name: 📥 Download Extension Artifact
+        uses: actions/download-artifact@v4
         with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: packages/vscode-extension/package-lock.json
+          name: vscode-extension
+          path: ./artifacts
 
-      - name: �📦 Build VS Code Extension
+      - name: 🔍 Prepare extension artifact
         run: |
-          cd packages/vscode-extension
-          npm ci
-          npm run compile
-          npm install -g @vscode/vsce
-          vsce package --out deno-mcp-extension-${{ steps.tag.outputs.VERSION }}.vsix
+          echo "Downloaded artifacts:"
+          ls -la ./artifacts/
+          # Find the .vsix file and copy it with version-specific name
+          VSIX_FILE=$(find ./artifacts -name "*.vsix" | head -1)
+          if [ -n "$VSIX_FILE" ]; then
+            cp "$VSIX_FILE" "./deno-mcp-extension-${{ steps.tag.outputs.VERSION }}.vsix"
+            echo "Prepared: deno-mcp-extension-${{ steps.tag.outputs.VERSION }}.vsix"
+            ls -la deno-mcp-extension-*.vsix
+          else
+            echo "No .vsix file found!"
+            exit 1
+          fi
 
       - name: 📦 Create release
         id: create_release
@@ -291,6 +297,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: packages/vscode-extension/deno-mcp-extension-${{ steps.tag.outputs.VERSION }}.vsix
+          asset_path: ./deno-mcp-extension-${{ steps.tag.outputs.VERSION }}.vsix
           asset_name: deno-mcp-extension-${{ steps.tag.outputs.VERSION }}.vsix
           asset_content_type: application/zip
