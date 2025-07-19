@@ -97,7 +97,7 @@ jobs:
         run: npm run compile
 
   build-monorepo:
-    name: 🏗️ Build Monorepo
+    name: 🏗️ Build Artifacts
     runs-on: windows-latest
     needs: [test-server, test-extension, performance, format, security, docs]
 
@@ -117,14 +117,16 @@ jobs:
           cache: "npm"
           cache-dependency-path: packages/vscode-extension/package-lock.json
 
-      - name: 📋 Install extension dependencies
-        run: |
-          cd packages/vscode-extension
-          npm ci
-
-      - name: 🏗️ Build with PowerShell script
-        run: .\build.ps1 all -ShowVerbose
+      - name: 🏗️ Build artifacts (no tests)
+        run: .\build-artifacts.ps1 -ShowVerbose
         shell: pwsh
+
+      - name: 📤 Upload Extension Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-extension
+          path: packages/vscode-extension/*.vsix
+          retention-days: 1
 
   format:
     name: 🎨 Format Check
@@ -223,8 +225,8 @@ jobs:
       - name: 🏷️ Create release tag
         id: tag
         run: |
-          # Extract version from deno.json or use date-based versioning
-          VERSION=$(date +%Y.%m.%d)
+          # Use time-based versioning for unique releases
+          VERSION=$(date +%Y.%m.%d.%H%M)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "Creating release $VERSION"
 
