@@ -153,22 +153,22 @@ code --install-extension deno-mcp-extension-0.0.1.vsix
 # Example GitHub Actions
 - name: Run build pipeline
   run: |
-      pwsh -Command ".\build.ps1 all -ShowVerbose"
+    pwsh -Command ".\build.ps1 all -ShowVerbose"
 ```
 
 ### VS Code Tasks
 
 ```json
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Build All",
-            "type": "shell",
-            "command": ".\build.ps1 all",
-            "group": "build"
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build All",
+      "type": "shell",
+      "command": ".\build.ps1 all",
+      "group": "build"
+    }
+  ]
 }
 ```
 
@@ -176,11 +176,11 @@ code --install-extension deno-mcp-extension-0.0.1.vsix
 
 ```json
 {
-    "scripts": {
-        "build": "pwsh -Command '.\build.ps1 all'",
-        "test": "pwsh -Command '.\build.ps1 test'",
-        "package": "pwsh -Command '.\build.ps1 package'"
-    }
+  "scripts": {
+    "build": "pwsh -Command '.\build.ps1 all'",
+    "test": "pwsh -Command '.\build.ps1 test'",
+    "package": "pwsh -Command '.\build.ps1 package'"
+  }
 }
 ```
 
