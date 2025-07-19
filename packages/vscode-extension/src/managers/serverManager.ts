@@ -2,7 +2,14 @@ import * as vscode from "vscode";
 import * as path from "path";
 import { ChildProcess, spawn } from "child_process";
 import { IMCPServerManager, ServerCommand } from "../types";
-import { CONFIG_DEFAULTS, ENV_VARS, TRANSPORTS, ICONS, SERVER_FILES, OUTPUT_CHANNELS } from "../config/constants";
+import {
+  CONFIG_DEFAULTS,
+  ENV_VARS,
+  ICONS,
+  OUTPUT_CHANNELS,
+  SERVER_FILES,
+  TRANSPORTS,
+} from "../config/constants";
 
 /**
  * MCP Server manager class
@@ -168,7 +175,10 @@ export class MCPServerManager implements IMCPServerManager {
         if (this.mcpProcess && !this.mcpProcess.killed) {
           this.updateStatusBar(true);
           const port = config.get<number>("mcpServerPort", CONFIG_DEFAULTS.MCP_SERVER_PORT);
-          const useHttp = config.get<boolean>("useHttpTransport", CONFIG_DEFAULTS.USE_HTTP_TRANSPORT);
+          const useHttp = config.get<boolean>(
+            "useHttpTransport",
+            CONFIG_DEFAULTS.USE_HTTP_TRANSPORT,
+          );
           const message = useHttp
             ? `Deno MCP Server started on port ${port}`
             : "Deno MCP Server started (stdio mode)";

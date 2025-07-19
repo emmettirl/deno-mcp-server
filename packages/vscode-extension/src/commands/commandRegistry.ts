@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { ExtensionManagers, CommandHandler } from "../types";
+import { CommandHandler, ExtensionManagers } from "../types";
 import { COMMANDS } from "../config/constants";
 import { MCPConfigurationManager } from "../mcpConfig";
 

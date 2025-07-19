@@ -20,17 +20,17 @@ export class MCPConfigurationManager {
    */
   private getMCPConfigPath(): string {
     const userDataPath = os.homedir();
-    
+
     // For Windows, check AppData/Roaming/Code/User first
-    if (process.platform === 'win32') {
-      const appDataPath = path.join(userDataPath, 'AppData', 'Roaming', 'Code', 'User', 'mcp.json');
+    if (process.platform === "win32") {
+      const appDataPath = path.join(userDataPath, "AppData", "Roaming", "Code", "User", "mcp.json");
       if (fs.existsSync(appDataPath) || fs.existsSync(path.dirname(appDataPath))) {
         return appDataPath;
       }
     }
-    
+
     // Default path
-    const configPath = path.join(userDataPath, '.vscode', 'mcp.json');
+    const configPath = path.join(userDataPath, ".vscode", "mcp.json");
     return configPath;
   }
 
@@ -40,7 +40,7 @@ export class MCPConfigurationManager {
   private createMCPConfig(): any {
     return {
       servers: {},
-      inputs: []
+      inputs: [],
     };
   }
 
@@ -49,18 +49,18 @@ export class MCPConfigurationManager {
    */
   private loadMCPConfig(): any {
     const configPath = this.getMCPConfigPath();
-    
+
     try {
       if (fs.existsSync(configPath)) {
-        const configContent = fs.readFileSync(configPath, 'utf8');
+        const configContent = fs.readFileSync(configPath, "utf8");
         // Handle JSON with comments (jsonc)
-        const cleanJson = configContent.replace(/(\/\*[\s\S]*?\*\/)|(\/\/.*$)/gm, '');
+        const cleanJson = configContent.replace(/(\/\*[\s\S]*?\*\/)|(\/\/.*$)/gm, "");
         return JSON.parse(cleanJson);
       }
     } catch (error) {
       this.outputChannel.appendLine(`Failed to load MCP config: ${error}`);
     }
-    
+
     return this.createMCPConfig();
   }
 
@@ -69,7 +69,7 @@ export class MCPConfigurationManager {
    */
   private saveMCPConfig(config: any): boolean {
     const configPath = this.getMCPConfigPath();
-    
+
     try {
       // Ensure directory exists
       const configDir = path.dirname(configPath);
@@ -77,8 +77,8 @@ export class MCPConfigurationManager {
         fs.mkdirSync(configDir, { recursive: true });
       }
 
-      const jsonContent = JSON.stringify(config, null, '\t');
-      fs.writeFileSync(configPath, jsonContent, 'utf8');
+      const jsonContent = JSON.stringify(config, null, "\t");
+      fs.writeFileSync(configPath, jsonContent, "utf8");
       this.outputChannel.appendLine(`MCP config saved to: ${configPath}`);
       return true;
     } catch (error) {
@@ -95,23 +95,23 @@ export class MCPConfigurationManager {
     const config = vscode.workspace.getConfiguration("deno-mcp");
     const useHttp = config.get<boolean>("useHttpTransport", false);
     const port = config.get<number>("mcpServerPort", 3000);
-    
+
     if (useHttp) {
       return {
         type: "http",
         url: `http://localhost:${port}/`,
-        gallery: false
+        gallery: false,
       };
     } else {
       // For stdio mode, we need the Deno executable and the server script
       const denoPath = config.get<string>("denoPath", "deno");
       const serverPath = this.findMCPServerPath();
-      
+
       return {
         type: "stdio",
         command: denoPath,
         args: ["run", "--allow-all", serverPath],
-        gallery: false
+        gallery: false,
       };
     }
   }
@@ -122,7 +122,7 @@ export class MCPConfigurationManager {
   private findMCPServerPath(): string {
     const config = vscode.workspace.getConfiguration("deno-mcp");
     const configPath = config.get<string>("mcpServerPath");
-    
+
     if (configPath) {
       return configPath;
     }
@@ -152,7 +152,7 @@ export class MCPConfigurationManager {
     try {
       const config = this.loadMCPConfig();
       const serverName = "deno-mcp-server";
-      
+
       // Check if our server is already configured
       if (config.servers?.[serverName]) {
         this.outputChannel.appendLine(`Deno MCP server already configured in MCP config`);
@@ -165,14 +165,13 @@ export class MCPConfigurationManager {
       }
 
       config.servers[serverName] = this.getDenoMCPServerConfig();
-      
+
       if (this.saveMCPConfig(config)) {
         vscode.window.showInformationMessage(
-          'Deno MCP server has been automatically configured in VS Code MCP settings'
+          "Deno MCP server has been automatically configured in VS Code MCP settings",
         );
-        this.outputChannel.appendLine('Deno MCP server configuration completed successfully');
+        this.outputChannel.appendLine("Deno MCP server configuration completed successfully");
       }
-      
     } catch (error) {
       this.outputChannel.appendLine(`Failed to setup MCP configuration: ${error}`);
       vscode.window.showErrorMessage(`Failed to setup MCP configuration: ${error}`);
@@ -186,20 +185,19 @@ export class MCPConfigurationManager {
     try {
       const config = this.loadMCPConfig();
       const serverName = "deno-mcp-server";
-      
+
       if (config.servers?.[serverName]) {
         delete config.servers[serverName];
-        
+
         if (this.saveMCPConfig(config)) {
           vscode.window.showInformationMessage(
-            'Deno MCP server configuration has been removed from VS Code MCP settings'
+            "Deno MCP server configuration has been removed from VS Code MCP settings",
           );
-          this.outputChannel.appendLine('Deno MCP server configuration removed successfully');
+          this.outputChannel.appendLine("Deno MCP server configuration removed successfully");
         }
       } else {
-        this.outputChannel.appendLine('Deno MCP server was not configured in MCP config');
+        this.outputChannel.appendLine("Deno MCP server was not configured in MCP config");
       }
-      
     } catch (error) {
       this.outputChannel.appendLine(`Failed to remove MCP configuration: ${error}`);
       vscode.window.showErrorMessage(`Failed to remove MCP configuration: ${error}`);
@@ -213,19 +211,18 @@ export class MCPConfigurationManager {
     try {
       const config = this.loadMCPConfig();
       const serverName = "deno-mcp-server";
-      
+
       if (config.servers?.[serverName]) {
         // Update the existing configuration
         config.servers[serverName] = this.getDenoMCPServerConfig();
-        
+
         if (this.saveMCPConfig(config)) {
-          this.outputChannel.appendLine('Deno MCP server configuration updated successfully');
+          this.outputChannel.appendLine("Deno MCP server configuration updated successfully");
         }
       } else {
         // If not configured, set it up
         await this.setupMCPConfiguration();
       }
-      
     } catch (error) {
       this.outputChannel.appendLine(`Failed to update MCP configuration: ${error}`);
     }
