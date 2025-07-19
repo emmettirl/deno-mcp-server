@@ -141,9 +141,7 @@ export class DenoMCPServer {
         id: request.id,
         error: {
           code: -32603,
-          message: `Internal error: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
+          message: `Internal error: ${error instanceof Error ? error.message : String(error)}`,
         },
       };
     }
@@ -164,8 +162,7 @@ export class DenoMCPServer {
           files: {
             type: "array",
             items: { type: "string" },
-            description:
-              "Specific files to format (optional, formats all if not specified)",
+            description: "Specific files to format (optional, formats all if not specified)",
           },
           check: {
             type: "boolean",
@@ -191,8 +188,7 @@ export class DenoMCPServer {
           files: {
             type: "array",
             items: { type: "string" },
-            description:
-              "Specific files to lint (optional, lints all if not specified)",
+            description: "Specific files to lint (optional, lints all if not specified)",
           },
           fix: {
             type: "boolean",
@@ -223,8 +219,7 @@ export class DenoMCPServer {
           files: {
             type: "array",
             items: { type: "string" },
-            description:
-              "Specific files to check (optional, checks all if not specified)",
+            description: "Specific files to check (optional, checks all if not specified)",
           },
           all: {
             type: "boolean",
@@ -255,8 +250,7 @@ export class DenoMCPServer {
           files: {
             type: "array",
             items: { type: "string" },
-            description:
-              "Specific test files to run (optional, runs all if not specified)",
+            description: "Specific test files to run (optional, runs all if not specified)",
           },
           watch: {
             type: "boolean",
@@ -462,9 +456,7 @@ export class DenoMCPServer {
           ? "✅ All files are properly formatted!"
           : "✅ Files formatted successfully!";
       } else {
-        output += check
-          ? "❌ Some files need formatting"
-          : "❌ Format operation failed";
+        output += check ? "❌ Some files need formatting" : "❌ Format operation failed";
       }
 
       return {
@@ -477,9 +469,7 @@ export class DenoMCPServer {
       return {
         content: [{
           type: "text",
-          text: `Error running deno fmt: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
+          text: `Error running deno fmt: ${error instanceof Error ? error.message : String(error)}`,
         }],
       };
     }
@@ -518,9 +508,7 @@ export class DenoMCPServer {
 
       const result = await this.executeDeno(denoArgs, workspaceRoot);
 
-      let output = `Deno lint ${
-        fix ? "with fixes" : ""
-      } completed with code: ${result.code}\n\n`;
+      let output = `Deno lint ${fix ? "with fixes" : ""} completed with code: ${result.code}\n\n`;
 
       if (result.stdout) {
         output += `STDOUT:\n${result.stdout}\n\n`;
@@ -688,8 +676,7 @@ export class DenoMCPServer {
 
       const result = await this.executeDeno(denoArgs, workspaceRoot);
 
-      let output =
-        `Deno test execution completed with code: ${result.code}\n\n`;
+      let output = `Deno test execution completed with code: ${result.code}\n\n`;
 
       if (result.stdout) {
         output += `STDOUT:\n${result.stdout}\n\n`;
@@ -726,8 +713,7 @@ export class DenoMCPServer {
   private async handleDenoRun(
     args: ToolArgs,
   ): Promise<Record<string, unknown>> {
-    const { workspacePath, script, permissions, watch, args: scriptArgs } =
-      args;
+    const { workspacePath, script, permissions, watch, args: scriptArgs } = args;
 
     try {
       const workspaceRoot = await this.findWorkspaceRoot(workspacePath);
@@ -877,9 +863,7 @@ export class DenoMCPServer {
         console.log(JSON.stringify(response));
       } catch (error) {
         console.error(
-          `Error processing request: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
+          `Error processing request: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
