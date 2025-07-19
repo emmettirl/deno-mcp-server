@@ -21,7 +21,9 @@ export class MCPServerManager implements IMCPServerManager {
   private readonly outputChannel: vscode.OutputChannel;
 
   constructor(private readonly context: vscode.ExtensionContext) {
-    this.outputChannel = vscode.window.createOutputChannel(OUTPUT_CHANNELS.MAIN);
+    this.outputChannel = vscode.window.createOutputChannel(
+      OUTPUT_CHANNELS.MAIN,
+    );
     this.statusBarItem = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Right,
       100,
@@ -46,13 +48,6 @@ export class MCPServerManager implements IMCPServerManager {
     }
 
     // Auto-detect: try server package for the packaged MCP server
-    const serverModPath = path.resolve(
-      __dirname,
-      "..",
-      "..",
-      "server",
-      SERVER_FILES.MOD_TS,
-    );
     const serverMainPath = path.resolve(
       __dirname,
       "..",
@@ -60,23 +55,32 @@ export class MCPServerManager implements IMCPServerManager {
       "server",
       SERVER_FILES.MAIN_TS,
     );
+    const serverModPath = path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "server",
+      SERVER_FILES.MOD_TS,
+    );
 
     try {
       const fs = require("fs");
-      if (fs.existsSync(serverModPath)) {
-        this.outputChannel.appendLine(
-          `Using packaged MCP server: ${serverModPath}`,
-        );
-        return serverModPath;
-      } else if (fs.existsSync(serverMainPath)) {
+      if (fs.existsSync(serverMainPath)) {
         this.outputChannel.appendLine(
           `Using packaged MCP server (main.ts): ${serverMainPath}`,
         );
         return serverMainPath;
+      } else if (fs.existsSync(serverModPath)) {
+        this.outputChannel.appendLine(
+          `Using packaged MCP server: ${serverModPath}`,
+        );
+        return serverModPath;
       }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      this.outputChannel.appendLine(`File system check failed: ${errorMsg}`);
+      this.outputChannel.appendLine(
+        `File system check failed: ${errorMsg}`,
+      );
     }
 
     // Fallback to mock server for development/testing
@@ -95,9 +99,18 @@ export class MCPServerManager implements IMCPServerManager {
     mcpServerPath: string,
     config: vscode.WorkspaceConfiguration,
   ): ServerCommand {
-    const denoPath = config.get<string>("denoPath", CONFIG_DEFAULTS.DENO_PATH);
-    const port = config.get<number>("mcpServerPort", CONFIG_DEFAULTS.MCP_SERVER_PORT);
-    const useHttp = config.get<boolean>("useHttpTransport", CONFIG_DEFAULTS.USE_HTTP_TRANSPORT);
+    const denoPath = config.get<string>(
+      "denoPath",
+      CONFIG_DEFAULTS.DENO_PATH,
+    );
+    const port = config.get<number>(
+      "mcpServerPort",
+      CONFIG_DEFAULTS.MCP_SERVER_PORT,
+    );
+    const useHttp = config.get<boolean>(
+      "useHttpTransport",
+      CONFIG_DEFAULTS.USE_HTTP_TRANSPORT,
+    );
 
     if (useHttp) {
       return {
@@ -156,7 +169,9 @@ export class MCPServerManager implements IMCPServerManager {
       });
 
       this.mcpProcess.on("close", (code) => {
-        this.outputChannel.appendLine(`MCP Server exited with code ${code}`);
+        this.outputChannel.appendLine(
+          `MCP Server exited with code ${code}`,
+        );
         this.mcpProcess = null;
         this.updateStatusBar(false);
       });
@@ -174,7 +189,10 @@ export class MCPServerManager implements IMCPServerManager {
       setTimeout(() => {
         if (this.mcpProcess && !this.mcpProcess.killed) {
           this.updateStatusBar(true);
-          const port = config.get<number>("mcpServerPort", CONFIG_DEFAULTS.MCP_SERVER_PORT);
+          const port = config.get<number>(
+            "mcpServerPort",
+            CONFIG_DEFAULTS.MCP_SERVER_PORT,
+          );
           const useHttp = config.get<boolean>(
             "useHttpTransport",
             CONFIG_DEFAULTS.USE_HTTP_TRANSPORT,
@@ -187,8 +205,12 @@ export class MCPServerManager implements IMCPServerManager {
       }, 1000);
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      this.outputChannel.appendLine(`Failed to start server: ${errorMsg}`);
-      vscode.window.showErrorMessage(`Failed to start MCP Server: ${errorMsg}`);
+      this.outputChannel.appendLine(
+        `Failed to start server: ${errorMsg}`,
+      );
+      vscode.window.showErrorMessage(
+        `Failed to start MCP Server: ${errorMsg}`,
+      );
     }
   }
 

@@ -11,7 +11,9 @@ export class MCPConfigurationManager {
   private readonly outputChannel: vscode.OutputChannel;
 
   constructor(private readonly context: vscode.ExtensionContext) {
-    this.outputChannel = vscode.window.createOutputChannel("Deno MCP Config");
+    this.outputChannel = vscode.window.createOutputChannel(
+      "Deno MCP Config",
+    );
     context.subscriptions.push(this.outputChannel);
   }
 
@@ -23,8 +25,18 @@ export class MCPConfigurationManager {
 
     // For Windows, check AppData/Roaming/Code/User first
     if (process.platform === "win32") {
-      const appDataPath = path.join(userDataPath, "AppData", "Roaming", "Code", "User", "mcp.json");
-      if (fs.existsSync(appDataPath) || fs.existsSync(path.dirname(appDataPath))) {
+      const appDataPath = path.join(
+        userDataPath,
+        "AppData",
+        "Roaming",
+        "Code",
+        "User",
+        "mcp.json",
+      );
+      if (
+        fs.existsSync(appDataPath) ||
+        fs.existsSync(path.dirname(appDataPath))
+      ) {
         return appDataPath;
       }
     }
@@ -54,11 +66,16 @@ export class MCPConfigurationManager {
       if (fs.existsSync(configPath)) {
         const configContent = fs.readFileSync(configPath, "utf8");
         // Handle JSON with comments (jsonc)
-        const cleanJson = configContent.replace(/(\/\*[\s\S]*?\*\/)|(\/\/.*$)/gm, "");
+        const cleanJson = configContent.replace(
+          /(\/\*[\s\S]*?\*\/)|(\/\/.*$)/gm,
+          "",
+        );
         return JSON.parse(cleanJson);
       }
     } catch (error) {
-      this.outputChannel.appendLine(`Failed to load MCP config: ${error}`);
+      this.outputChannel.appendLine(
+        `Failed to load MCP config: ${error}`,
+      );
     }
 
     return this.createMCPConfig();
@@ -82,8 +99,12 @@ export class MCPConfigurationManager {
       this.outputChannel.appendLine(`MCP config saved to: ${configPath}`);
       return true;
     } catch (error) {
-      this.outputChannel.appendLine(`Failed to save MCP config: ${error}`);
-      vscode.window.showErrorMessage(`Failed to save MCP configuration: ${error}`);
+      this.outputChannel.appendLine(
+        `Failed to save MCP config: ${error}`,
+      );
+      vscode.window.showErrorMessage(
+        `Failed to save MCP configuration: ${error}`,
+      );
       return false;
     }
   }
@@ -128,14 +149,26 @@ export class MCPConfigurationManager {
     }
 
     // Auto-detect: try server package for the packaged MCP server
-    const serverModPath = path.resolve(__dirname, "..", "..", "server", "mod.ts");
-    const serverMainPath = path.resolve(__dirname, "..", "..", "server", "main.ts");
+    const serverMainPath = path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "server",
+      "main.ts",
+    );
+    const serverModPath = path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "server",
+      "mod.ts",
+    );
 
     try {
-      if (fs.existsSync(serverModPath)) {
-        return serverModPath;
-      } else if (fs.existsSync(serverMainPath)) {
+      if (fs.existsSync(serverMainPath)) {
         return serverMainPath;
+      } else if (fs.existsSync(serverModPath)) {
+        return serverModPath;
       }
     } catch (error) {
       this.outputChannel.appendLine(`File system check failed: ${error}`);
@@ -155,7 +188,9 @@ export class MCPConfigurationManager {
 
       // Check if our server is already configured
       if (config.servers?.[serverName]) {
-        this.outputChannel.appendLine(`Deno MCP server already configured in MCP config`);
+        this.outputChannel.appendLine(
+          `Deno MCP server already configured in MCP config`,
+        );
         return;
       }
 
@@ -170,11 +205,17 @@ export class MCPConfigurationManager {
         vscode.window.showInformationMessage(
           "Deno MCP server has been automatically configured in VS Code MCP settings",
         );
-        this.outputChannel.appendLine("Deno MCP server configuration completed successfully");
+        this.outputChannel.appendLine(
+          "Deno MCP server configuration completed successfully",
+        );
       }
     } catch (error) {
-      this.outputChannel.appendLine(`Failed to setup MCP configuration: ${error}`);
-      vscode.window.showErrorMessage(`Failed to setup MCP configuration: ${error}`);
+      this.outputChannel.appendLine(
+        `Failed to setup MCP configuration: ${error}`,
+      );
+      vscode.window.showErrorMessage(
+        `Failed to setup MCP configuration: ${error}`,
+      );
     }
   }
 
@@ -193,14 +234,22 @@ export class MCPConfigurationManager {
           vscode.window.showInformationMessage(
             "Deno MCP server configuration has been removed from VS Code MCP settings",
           );
-          this.outputChannel.appendLine("Deno MCP server configuration removed successfully");
+          this.outputChannel.appendLine(
+            "Deno MCP server configuration removed successfully",
+          );
         }
       } else {
-        this.outputChannel.appendLine("Deno MCP server was not configured in MCP config");
+        this.outputChannel.appendLine(
+          "Deno MCP server was not configured in MCP config",
+        );
       }
     } catch (error) {
-      this.outputChannel.appendLine(`Failed to remove MCP configuration: ${error}`);
-      vscode.window.showErrorMessage(`Failed to remove MCP configuration: ${error}`);
+      this.outputChannel.appendLine(
+        `Failed to remove MCP configuration: ${error}`,
+      );
+      vscode.window.showErrorMessage(
+        `Failed to remove MCP configuration: ${error}`,
+      );
     }
   }
 
@@ -217,14 +266,18 @@ export class MCPConfigurationManager {
         config.servers[serverName] = this.getDenoMCPServerConfig();
 
         if (this.saveMCPConfig(config)) {
-          this.outputChannel.appendLine("Deno MCP server configuration updated successfully");
+          this.outputChannel.appendLine(
+            "Deno MCP server configuration updated successfully",
+          );
         }
       } else {
         // If not configured, set it up
         await this.setupMCPConfiguration();
       }
     } catch (error) {
-      this.outputChannel.appendLine(`Failed to update MCP configuration: ${error}`);
+      this.outputChannel.appendLine(
+        `Failed to update MCP configuration: ${error}`,
+      );
     }
   }
 }
