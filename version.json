@@ -1,19 +1,19 @@
 {
-  "version": "1.0.0",
-  "packages": {
-    "server": {
-      "version": "1.0.0",
-      "name": "deno-mcp-server",
-      "description": "Secure MCP server built with Deno"
+    "version": "1.0.0",
+    "packages": {
+        "server": {
+            "version": "1.0.0",
+            "name": "deno-mcp-server",
+            "description": "Secure MCP server built with Deno"
+        },
+        "vscode-extension": {
+            "version": "0.0.1",
+            "name": "deno-mcp-extension",
+            "description": "VS Code extension for Deno MCP Server"
+        }
     },
-    "vscode-extension": {
-      "version": "0.0.1",
-      "name": "deno-mcp-extension",
-      "description": "VS Code extension for Deno MCP Server"
+    "release": {
+        "date": "TBD",
+        "notes": "Initial monorepo release with automated CI/CD"
     }
-  },
-  "release": {
-    "date": "TBD",
-    "notes": "Initial monorepo release with automated CI/CD"
-  }
 }
