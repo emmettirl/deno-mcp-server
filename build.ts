@@ -23,325 +23,63 @@
  */
 
 import { parseArgs } from "https://deno.land/std@0.208.0/cli/parse_args.ts";
-import { exists } from "https://deno.land/std@0.208.0/fs/exists.ts";
+import {
+  build,
+  type BuildOptions,
+  clean,
+  formatCode,
+  lintCode,
+  packageExtension,
+  runAll,
+  runTests,
+  typeCheck,
+} from "./src/builders/index.ts";
 
-interface BuildOptions {
-  serverOnly: boolean;
-  extOnly: boolean;
-  verbose: boolean;
-}
+/**
+ * Show help information
+ */
+function showHelp(): void {
+  console.log(`
+🚀 Deno MCP Server Build Tool
 
-class BuildRunner {
-  private options: BuildOptions;
-  private serverDir = "./packages/server";
-  private extDir = "./packages/vscode-extension";
-
-  constructor(options: BuildOptions) {
-    this.options = options;
-  }
-
-  async run(command: string): Promise<void> {
-    console.log(`🚀 Starting ${command} for Deno MCP Server monorepo...`);
-
-    switch (command) {
-      case "fmt":
-        await this.formatCode();
-        break;
-      case "lint":
-        await this.lintCode();
-        break;
-      case "check":
-        await this.typeCheck();
-        break;
-      case "test":
-        await this.runTests();
-        break;
-      case "build":
-        await this.build();
-        break;
-      case "package":
-        await this.package();
-        break;
-      case "all":
-        await this.runAll();
-        break;
-      case "clean":
-        await this.clean();
-        break;
-      default:
-        this.showHelp();
-        Deno.exit(1);
-    }
-
-    console.log(`✅ ${command} completed successfully!`);
-  }
-
-  private async formatCode(): Promise<void> {
-    console.log("📝 Formatting code...");
-
-    if (!this.options.extOnly) {
-      await this.runCommand(
-        "Server format",
-        "deno",
-        ["fmt"],
-        this.serverDir,
-      );
-    }
-
-    if (!this.options.serverOnly) {
-      await this.runCommand(
-        "Extension format",
-        "npm",
-        ["run", "format"],
-        this.extDir,
-      );
-    }
-  }
-
-  private async lintCode(): Promise<void> {
-    console.log("🔍 Linting code...");
-
-    if (!this.options.extOnly) {
-      await this.runCommand(
-        "Server lint",
-        "deno",
-        ["lint"],
-        this.serverDir,
-      );
-    }
-
-    if (!this.options.serverOnly) {
-      await this.runCommand(
-        "Extension lint",
-        "npm",
-        ["run", "lint"],
-        this.extDir,
-      );
-    }
-  }
-
-  private async typeCheck(): Promise<void> {
-    console.log("🔎 Type checking...");
-
-    if (!this.options.extOnly) {
-      await this.runCommand("Server check", "deno", [
-        "check",
-        "src/main.ts",
-      ], this.serverDir);
-      await this.runCommand("Server check mod", "deno", [
-        "check",
-        "mod.ts",
-      ], this.serverDir);
-    }
-
-    if (!this.options.serverOnly) {
-      await this.runCommand("Extension check", "npm", [
-        "run",
-        "check-types",
-      ], this.extDir);
-    }
-  }
-
-  private async runTests(): Promise<void> {
-    console.log("🧪 Running tests...");
-
-    if (!this.options.extOnly) {
-      await this.runCommand("Server tests", "deno", [
-        "test",
-        "--allow-all",
-      ], this.serverDir);
-    }
-
-    if (!this.options.serverOnly) {
-      await this.runCommand(
-        "Extension tests",
-        "npm",
-        ["test"],
-        this.extDir,
-      );
-    }
-  }
-
-  private async build(): Promise<void> {
-    console.log("🏗️ Building packages...");
-
-    if (!this.options.extOnly) {
-      // Server doesn't need explicit build, but we can cache dependencies
-      await this.runCommand("Server cache", "deno", [
-        "cache",
-        "--reload",
-        "mod.ts",
-      ], this.serverDir);
-    }
-
-    if (!this.options.serverOnly) {
-      await this.runCommand(
-        "Extension build",
-        "npm",
-        ["run", "compile"],
-        this.extDir,
-      );
-    }
-  }
-
-  private async package(): Promise<void> {
-    console.log("📦 Packaging extension...");
-
-    if (this.options.serverOnly) {
-      console.log("⚠️ Skipping package (server-only mode)");
-      return;
-    }
-
-    // Ensure extension is built first
-    await this.runCommand(
-      "Extension compile",
-      "npm",
-      ["run", "compile"],
-      this.extDir,
-    );
-
-    // Check if vsce is available
-    try {
-      await this.runCommand(
-        "Check vsce",
-        "npx",
-        ["vsce", "--version"],
-        this.extDir,
-      );
-    } catch {
-      console.log("📥 Installing vsce...");
-      await this.runCommand("Install vsce", "npm", [
-        "install",
-        "-g",
-        "@vscode/vsce",
-      ], this.extDir);
-    }
-
-    // Package extension
-    await this.runCommand(
-      "Package extension",
-      "npx",
-      ["vsce", "package"],
-      this.extDir,
-    );
-  }
-
-  private async runAll(): Promise<void> {
-    console.log("🎯 Running all commands...");
-
-    await this.formatCode();
-    await this.lintCode();
-    await this.typeCheck();
-    await this.runTests();
-    await this.build();
-
-    if (!this.options.serverOnly) {
-      await this.package();
-    }
-  }
-
-  private async clean(): Promise<void> {
-    console.log("🧹 Cleaning build artifacts...");
-
-    const pathsToClean = [
-      "./packages/vscode-extension/out",
-      "./packages/vscode-extension/node_modules",
-      "./packages/vscode-extension/.vscode-test",
-      "./packages/vscode-extension/*.vsix",
-      "./packages/server/.deno",
-    ];
-
-    for (const path of pathsToClean) {
-      if (await exists(path)) {
-        console.log(`  Removing ${path}...`);
-        await Deno.remove(path, { recursive: true });
-      }
-    }
-  }
-
-  private async runCommand(
-    name: string,
-    cmd: string,
-    args: string[],
-    cwd?: string,
-  ): Promise<void> {
-    if (this.options.verbose) {
-      console.log(
-        `  Running: ${cmd} ${args.join(" ")} ${cwd ? `(in ${cwd})` : ""}`,
-      );
-    } else {
-      console.log(`  ${name}...`);
-    }
-
-    const command = new Deno.Command(cmd, {
-      args,
-      cwd,
-      stdout: this.options.verbose ? "inherit" : "piped",
-      stderr: "inherit",
-    });
-
-    const process = command.spawn();
-    const status = await process.status;
-
-    if (!status.success) {
-      console.error(`❌ ${name} failed with exit code ${status.code}`);
-      Deno.exit(status.code);
-    }
-
-    if (this.options.verbose) {
-      console.log(`  ✅ ${name} completed`);
-    }
-  }
-
-  private showHelp(): void {
-    console.log(`
-🛠️ Deno MCP Server Build Script
-
-Usage:
-  deno run --allow-all build.ts [command] [options]
+Usage: deno run --allow-all build.ts [command] [options]
 
 Commands:
-  fmt      - Format all code
-  lint     - Lint all code  
-  check    - Type check all code
-  test     - Run all tests
-  build    - Build all packages
-  package  - Package extension
-  all      - Run all commands (fmt, lint, check, test, build, package)
-  clean    - Clean build artifacts
+  fmt       Format all code using Deno fmt and npm format
+  lint      Lint all code using Deno lint and ESLint
+  check     Type check all code using Deno check and TypeScript
+  test      Run all tests using Deno test and npm test
+  build     Build all packages (cache server deps, compile extension)
+  package   Package VS Code extension into VSIX file
+  all       Run all commands in sequence (fmt, lint, check, test, build, package)
+  clean     Remove build artifacts and dependencies
 
 Options:
-  --server-only    - Only run for server package
-  --ext-only       - Only run for extension package  
-  --verbose        - Show detailed output
+  --server-only     Only run commands for server package
+  --ext-only        Only run commands for extension package
+  --verbose         Show detailed command output
+  --help            Show this help message
 
 Examples:
-  deno run --allow-all build.ts all
+  deno run --allow-all build.ts fmt
   deno run --allow-all build.ts test --verbose
-  deno run --allow-all build.ts fmt --server-only
-  deno run --allow-all build.ts package --ext-only
+  deno run --allow-all build.ts all --server-only
 `);
-  }
 }
 
-// Main execution
-if (import.meta.main) {
+/**
+ * Main entry point
+ */
+async function main(): Promise<void> {
   const args = parseArgs(Deno.args, {
     boolean: ["server-only", "ext-only", "verbose", "help"],
-    string: [],
-    alias: {
-      h: "help",
-      v: "verbose",
-    },
+    alias: { h: "help", v: "verbose" },
+    default: { verbose: false },
   });
 
   if (args.help || args._.length === 0) {
-    new BuildRunner({
-      serverOnly: false,
-      extOnly: false,
-      verbose: false,
-    }).showHelp();
-    Deno.exit(0);
+    showHelp();
+    return;
   }
 
   const command = args._[0] as string;
@@ -353,15 +91,52 @@ if (import.meta.main) {
 
   // Validate conflicting options
   if (options.serverOnly && options.extOnly) {
-    console.error("❌ Cannot use --server-only and --ext-only together");
+    console.error("❌ Cannot use both --server-only and --ext-only");
     Deno.exit(1);
   }
 
+  console.log(`🚀 Starting ${command} for Deno MCP Server monorepo...`);
+
   try {
-    const runner = new BuildRunner(options);
-    await runner.run(command);
+    switch (command) {
+      case "fmt":
+        await formatCode(options);
+        break;
+      case "lint":
+        await lintCode(options);
+        break;
+      case "check":
+        await typeCheck(options);
+        break;
+      case "test":
+        await runTests(options);
+        break;
+      case "build":
+        await build(options);
+        break;
+      case "package":
+        await packageExtension(options);
+        break;
+      case "all":
+        await runAll(options);
+        break;
+      case "clean":
+        await clean(options);
+        break;
+      default:
+        console.error(`❌ Unknown command: ${command}`);
+        showHelp();
+        Deno.exit(1);
+    }
+
+    console.log(`✅ Command '${command}' completed successfully!`);
   } catch (error) {
-    console.error(`❌ Build failed: ${error.message}`);
+    console.error(`❌ Command '${command}' failed:`, error);
     Deno.exit(1);
   }
+}
+
+// Run main function if this is the main module
+if (import.meta.main) {
+  await main();
 }
