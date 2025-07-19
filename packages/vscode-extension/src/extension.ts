@@ -40,8 +40,20 @@ class MCPServerManager {
     }
 
     // Auto-detect: try server package for the packaged MCP server
-    const serverModPath = path.resolve(__dirname, "..", "..", "server", "mod.ts");
-    const serverMainPath = path.resolve(__dirname, "..", "..", "server", "main.ts");
+    const serverModPath = path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "server",
+      "mod.ts",
+    );
+    const serverMainPath = path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "server",
+      "main.ts",
+    );
 
     try {
       const fs = require("fs");
@@ -58,17 +70,11 @@ class MCPServerManager {
       }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      this.outputChannel.appendLine(
-        `File system check failed: ${errorMsg}`,
-      );
+      this.outputChannel.appendLine(`File system check failed: ${errorMsg}`);
     }
 
     // Fallback to mock server for development/testing
-    const mockServerPath = path.resolve(
-      __dirname,
-      "..",
-      "mock-mcp-server.ts",
-    );
+    const mockServerPath = path.resolve(__dirname, "..", "mock-mcp-server.ts");
     this.outputChannel.appendLine(
       `Using mock server as fallback: ${mockServerPath}`,
     );
@@ -140,9 +146,7 @@ class MCPServerManager {
       });
 
       this.mcpProcess.on("close", (code) => {
-        this.outputChannel.appendLine(
-          `MCP Server exited with code ${code}`,
-        );
+        this.outputChannel.appendLine(`MCP Server exited with code ${code}`);
         this.mcpProcess = null;
         this.updateStatusBar(false);
       });
@@ -161,10 +165,7 @@ class MCPServerManager {
         if (this.mcpProcess && !this.mcpProcess.killed) {
           this.updateStatusBar(true);
           const port = config.get<number>("mcpServerPort", 3000);
-          const useHttp = config.get<boolean>(
-            "useHttpTransport",
-            false,
-          );
+          const useHttp = config.get<boolean>("useHttpTransport", false);
           const message = useHttp
             ? `Deno MCP Server started on port ${port}`
             : "Deno MCP Server started (stdio mode)";
@@ -173,12 +174,8 @@ class MCPServerManager {
       }, 1000);
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      this.outputChannel.appendLine(
-        `Failed to start server: ${errorMsg}`,
-      );
-      vscode.window.showErrorMessage(
-        `Failed to start MCP Server: ${errorMsg}`,
-      );
+      this.outputChannel.appendLine(`Failed to start server: ${errorMsg}`);
+      vscode.window.showErrorMessage(`Failed to start MCP Server: ${errorMsg}`);
     }
   }
 
@@ -211,8 +208,8 @@ class DenoCommandRunner {
     const config = vscode.workspace.getConfiguration("deno-mcp");
     const denoPath = config.get<string>("denoPath", "deno");
 
-    const cwd = workingDir ||
-      vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    const cwd =
+      workingDir || vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
     if (!cwd) {
       vscode.window.showErrorMessage("No workspace folder found");
       return;
@@ -234,9 +231,7 @@ class DenoCommandRunner {
 
       process.on("close", (code) => {
         if (code === 0) {
-          this.outputChannel.appendLine(
-            `✓ Command completed successfully`,
-          );
+          this.outputChannel.appendLine(`✓ Command completed successfully`);
           resolve();
         } else {
           this.outputChannel.appendLine(
@@ -323,9 +318,7 @@ export function activate(context: vscode.ExtensionContext) {
         await denoCommandRunner.format(filePath);
         if (filePath) {
           // Reload the file to show formatted changes
-          await vscode.commands.executeCommand(
-            "workbench.action.files.revert",
-          );
+          await vscode.commands.executeCommand("workbench.action.files.revert");
         }
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
@@ -351,9 +344,7 @@ export function activate(context: vscode.ExtensionContext) {
         await denoCommandRunner.check(filePath);
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
-        vscode.window.showErrorMessage(
-          `Type check failed: ${errorMsg}`,
-        );
+        vscode.window.showErrorMessage(`Type check failed: ${errorMsg}`);
       }
     }),
 

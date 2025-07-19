@@ -12,6 +12,7 @@
 ### Extension Setup
 
 1. **Clone/Open the Extension**
+
    ```bash
    cd path/to/deno-mcp-extension
    npm install
@@ -53,6 +54,7 @@
 ### Testing the Extension
 
 1. **Using the Example Project**
+
    ```bash
    # In Extension Development Host, open example/ folder
    # Try the following:

@@ -203,4 +203,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <p align="center">
   <strong>🚀 Built with Deno • 🎯 Integrated with VS Code • 🔒 Security First</strong>
 </p>
-</p>

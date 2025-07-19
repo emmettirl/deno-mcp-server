@@ -198,9 +198,7 @@ export function filterFiles(
 
   // Apply exclude patterns
   if (excludePatterns.length > 0) {
-    filtered = filtered.filter((file) =>
-      !shouldExcludeFile(file, excludePatterns)
-    );
+    filtered = filtered.filter((file) => !shouldExcludeFile(file, excludePatterns));
   }
 
   return filtered;

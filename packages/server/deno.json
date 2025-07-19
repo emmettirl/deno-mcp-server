@@ -54,11 +54,12 @@
   },
   "fmt": {
     "useTabs": false,
-    "lineWidth": 80,
+    "lineWidth": 100,
     "indentWidth": 2,
     "semiColons": true,
     "singleQuote": false,
     "proseWrap": "preserve",
+    "newLineKind": "lf",
     "include": ["src/", "*.ts", "*.js"],
     "exclude": ["dist/", "node_modules/", "deno-mcp-extension/"]
   },

@@ -151,8 +151,14 @@ suite("Mock MCP Server Tests", () => {
       };
 
       // Mock the server's tool execution logic
-      const isValidTool = ["format", "lint", "check", "test", "info", "run"]
-        .includes(toolRequest.tool);
+      const isValidTool = [
+        "format",
+        "lint",
+        "check",
+        "test",
+        "info",
+        "run",
+      ].includes(toolRequest.tool);
       const hasArguments = Array.isArray(toolRequest.arguments);
       const hasWorkspace = typeof toolRequest.workspace === "string";
 
@@ -176,12 +182,12 @@ suite("Mock MCP Server Tests", () => {
 
     test("Should provide tool descriptions", () => {
       const toolDescriptions = {
-        "format": "Format TypeScript/JavaScript code using Deno formatter",
-        "lint": "Lint code using Deno linter",
-        "check": "Type check TypeScript code",
-        "test": "Run Deno tests",
-        "info": "Show information about modules",
-        "run": "Run Deno scripts",
+        format: "Format TypeScript/JavaScript code using Deno formatter",
+        lint: "Lint code using Deno linter",
+        check: "Type check TypeScript code",
+        test: "Run Deno tests",
+        info: "Show information about modules",
+        run: "Run Deno scripts",
       };
 
       for (const [tool, description] of Object.entries(toolDescriptions)) {

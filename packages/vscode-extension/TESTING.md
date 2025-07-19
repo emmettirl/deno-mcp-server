@@ -57,6 +57,7 @@ In the Extension Development Host window:
 ### ✅ Basic Commands Test
 
 1. **Test Format Command**
+
    ```bash
    # Open example/mod.ts
    # Mess up the formatting (add extra spaces, etc.)
@@ -65,6 +66,7 @@ In the Extension Development Host window:
    ```
 
 2. **Test Lint Command**
+
    ```bash
    # Open example/mod.ts
    # Press Ctrl+Shift+L or run "Deno MCP: Lint Code"
@@ -72,6 +74,7 @@ In the Extension Development Host window:
    ```
 
 3. **Test Run Tests**
+
    ```bash
    # Open example/mod_test.ts
    # Press Ctrl+Shift+T or run "Deno MCP: Run Tests"
@@ -87,6 +90,7 @@ In the Extension Development Host window:
 ### ✅ MCP Server Test
 
 1. **Start MCP Server**
+
    ```bash
    # Run "Deno MCP: Start MCP Server"
    # Status bar should change to green checkmark ✅
@@ -94,6 +98,7 @@ In the Extension Development Host window:
    ```
 
 2. **Server Status**
+
    ```bash
    # Click the "Deno MCP" status bar item
    # Should open output panel showing server logs
@@ -108,6 +113,7 @@ In the Extension Development Host window:
 ### ✅ Configuration Test
 
 1. **Open Settings**
+
    ```bash
    # File > Preferences > Settings
    # Search for "Deno MCP"
@@ -156,9 +162,11 @@ In the Extension Development Host window:
    - Press F5 to launch with debugging
 
 2. **Console Logging**
+
    ```typescript
    console.log("Debug info:", someVariable);
    ```
+
    - View in Developer Tools Console
 
 3. **Extension Host Console**
@@ -212,6 +220,7 @@ MCP Server started on port 3000
    - Update package.json manifest
 
 2. **Package Extension**
+
    ```bash
    npm run package
    # Creates production build in dist/
@@ -234,7 +243,7 @@ VS Code Version: ___________
 ✅/❌ Extension activates
 ✅/❌ Commands appear in palette
 ✅/❌ Format command works
-✅/❌ Lint command works  
+✅/❌ Lint command works
 ✅/❌ Test command works
 ✅/❌ MCP server starts
 ✅/❌ Status bar updates

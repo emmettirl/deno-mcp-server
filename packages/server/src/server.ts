@@ -1,12 +1,6 @@
 // Core MCP Server implementation
 
-import {
-  MCPRequest,
-  MCPResponse,
-  MCPTool,
-  ToolArgs,
-  ToolDefinition,
-} from "./types.ts";
+import { MCPRequest, MCPResponse, MCPTool, ToolArgs, ToolDefinition } from "./types.ts";
 import { validateToolArgs } from "./validation.ts";
 import { loadConfig as _loadConfig } from "./config.ts";
 
@@ -119,9 +113,7 @@ export class DenoMCPServer {
         id: request.id,
         error: {
           code: -32603,
-          message: `Internal error: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
+          message: `Internal error: ${error instanceof Error ? error.message : String(error)}`,
         },
       };
     }
@@ -141,9 +133,7 @@ export class DenoMCPServer {
         console.log(JSON.stringify(response));
       } catch (error) {
         console.error(
-          `Error processing request: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
+          `Error processing request: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }

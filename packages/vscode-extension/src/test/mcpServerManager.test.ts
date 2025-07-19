@@ -207,9 +207,10 @@ suite("MCP Server Manager Tests", () => {
 
     test("Should handle unknown error types", () => {
       const unknownError = { code: 500, message: "Unknown error" };
-      const errorMsg = unknownError instanceof Error
-        ? unknownError.message
-        : JSON.stringify(unknownError);
+      const errorMsg =
+        unknownError instanceof Error
+          ? unknownError.message
+          : JSON.stringify(unknownError);
 
       assert.ok(
         errorMsg.includes("Unknown error"),
