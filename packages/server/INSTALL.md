@@ -1,11 +1,13 @@
 # Installation Guide
 
-This guide covers different ways to install and use the Deno MCP Server in your projects.
+This guide covers different ways to install and use the Deno MCP Server in your
+projects.
 
 ## Prerequisites
 
 - [Deno](https://deno.land/) 1.40.0 or later
-- A Model Context Protocol (MCP) compatible client (e.g., Claude Desktop, VS Code with MCP extension)
+- A Model Context Protocol (MCP) compatible client (e.g., Claude Desktop, VS
+  Code with MCP extension)
 
 ## Installation Methods
 
@@ -48,10 +50,16 @@ deno task build
 
 ```typescript
 // Import in your Deno project
-import { DenoMCPServer, allTools } from "https://deno.land/x/deno_mcp_server/mod.ts";
+import {
+  allTools,
+  DenoMCPServer,
+} from "https://deno.land/x/deno_mcp_server/mod.ts";
 
 // Or import specific tools
-import { fmtTool, lintTool } from "https://deno.land/x/deno_mcp_server/src/tools/index.ts";
+import {
+  fmtTool,
+  lintTool,
+} from "https://deno.land/x/deno_mcp_server/src/tools/index.ts";
 
 // Create and run server
 const server = new DenoMCPServer([fmtTool, lintTool]);
@@ -157,7 +165,8 @@ The MCP server requires the following Deno permissions:
 - `--allow-run`: To execute Deno commands (`deno fmt`, `deno lint`, etc.)
 - `--allow-write`: To write formatted files and test outputs
 
-These permissions are automatically included when using the provided installation methods.
+These permissions are automatically included when using the provided
+installation methods.
 
 ## Troubleshooting
 

@@ -1,6 +1,7 @@
 # Build System
 
-This monorepo includes comprehensive build scripts for both the Deno MCP Server and VS Code Extension.
+This monorepo includes comprehensive build scripts for both the Deno MCP Server
+and VS Code Extension.
 
 ## Quick Start
 
@@ -24,6 +25,7 @@ This monorepo includes comprehensive build scripts for both the Deno MCP Server 
 ## Build Scripts
 
 ### PowerShell Script (`build.ps1`)
+
 Windows-optimized build script with full feature support.
 
 ```powershell
@@ -35,6 +37,7 @@ Windows-optimized build script with full feature support.
 ```
 
 ### Deno Script (`build.ts`)
+
 Cross-platform TypeScript build script for Deno environments.
 
 ```bash
@@ -65,25 +68,27 @@ packages/
 
 ## Commands
 
-| Command | Description | Server | Extension |
-|---------|-------------|--------|-----------|
-| `fmt` | Format code | `deno fmt` | `eslint --fix` |
-| `lint` | Lint code | `deno lint` | `eslint` |
-| `check` | Type check | `deno check` | `tsc --noEmit` |
-| `test` | Run tests | `deno test` | `vscode-test` |
-| `build` | Build packages | Cache deps | Compile TS |
-| `package` | Create .vsix | N/A | `vsce package` |
-| `clean` | Clean artifacts | Remove cache | Remove out/ |
+| Command   | Description     | Server       | Extension      |
+| --------- | --------------- | ------------ | -------------- |
+| `fmt`     | Format code     | `deno fmt`   | `eslint --fix` |
+| `lint`    | Lint code       | `deno lint`  | `eslint`       |
+| `check`   | Type check      | `deno check` | `tsc --noEmit` |
+| `test`    | Run tests       | `deno test`  | `vscode-test`  |
+| `build`   | Build packages  | Cache deps   | Compile TS     |
+| `package` | Create .vsix    | N/A          | `vsce package` |
+| `clean`   | Clean artifacts | Remove cache | Remove out/    |
 
 ## Options
 
 ### PowerShell Script
+
 - `-ServerOnly` - Only run commands for server package
-- `-ExtOnly` - Only run commands for extension package  
+- `-ExtOnly` - Only run commands for extension package
 - `-ShowVerbose` - Show detailed command output
 - `-Help` - Show help information
 
 ### Deno Script
+
 - `--server-only` - Only run commands for server package
 - `--ext-only` - Only run commands for extension package
 - `--verbose` - Show detailed command output
@@ -92,6 +97,7 @@ packages/
 ## Development Workflow
 
 ### Daily Development
+
 ```bash
 # Quick validation
 .\build.ps1 fmt
@@ -102,6 +108,7 @@ packages/
 ```
 
 ### Server Development
+
 ```bash
 # Server-only workflow
 .\build.ps1 fmt -ServerOnly
@@ -112,7 +119,8 @@ cd packages/server
 deno run --allow-all mod.ts
 ```
 
-### Extension Development  
+### Extension Development
+
 ```bash
 # Extension-only workflow
 .\build.ps1 build -ExtOnly
@@ -124,6 +132,7 @@ code --install-extension deno-mcp-extension-0.0.1.vsix
 ```
 
 ### Release Process
+
 ```bash
 # Complete validation
 .\build.ps1 all -ShowVerbose
@@ -139,6 +148,7 @@ code --install-extension deno-mcp-extension-0.0.1.vsix
 ## Integration
 
 ### CI/CD Pipeline
+
 ```yaml
 # Example GitHub Actions
 - name: Run build pipeline
@@ -147,13 +157,14 @@ code --install-extension deno-mcp-extension-0.0.1.vsix
 ```
 
 ### VS Code Tasks
+
 ```json
 {
   "version": "2.0.0",
   "tasks": [
     {
       "label": "Build All",
-      "type": "shell", 
+      "type": "shell",
       "command": ".\build.ps1 all",
       "group": "build"
     }
@@ -162,6 +173,7 @@ code --install-extension deno-mcp-extension-0.0.1.vsix
 ```
 
 ### Package Scripts
+
 ```json
 {
   "scripts": {
@@ -177,17 +189,20 @@ code --install-extension deno-mcp-extension-0.0.1.vsix
 ### Common Issues
 
 **PowerShell Execution Policy**
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 **Deno Permissions**
+
 ```bash
 # Ensure build.ts has sufficient permissions
 deno run --allow-all build.ts <command>
 ```
 
 **Missing Dependencies**
+
 ```bash
 # Server dependencies
 cd packages/server && deno cache --reload mod.ts
@@ -205,10 +220,12 @@ cd packages/vscode-extension && npm install
 ## Output Files
 
 ### Server Package
+
 - Cached Deno modules in `.deno/`
 - No build artifacts (runtime compilation)
 
 ### Extension Package
+
 - `out/` - Compiled TypeScript
 - `dist/` - Bundled extension code
 - `*.vsix` - Installable extension package

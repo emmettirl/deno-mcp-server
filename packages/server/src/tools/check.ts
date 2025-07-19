@@ -65,7 +65,9 @@ async function handleDenoCheck(
     return {
       content: [{
         type: "text",
-        text: `Error running deno check: ${error instanceof Error ? error.message : String(error)}`,
+        text: `Error running deno check: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       }],
     };
   }
@@ -84,7 +86,8 @@ export const checkTool: ToolDefinition = {
       files: {
         type: "array",
         items: { type: "string" },
-        description: "Specific files to check (optional, checks all if not specified)",
+        description:
+          "Specific files to check (optional, checks all if not specified)",
       },
       all: {
         type: "boolean",

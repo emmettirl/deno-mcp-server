@@ -145,5 +145,5 @@ deno run --allow-all mod.ts
 
 ## License
 
-Copyright (c) 2025 Emmett Fitzharris. All Rights Reserved. See [LICENSE](LICENSE)
-file for details.
+Copyright (c) 2025 Emmett Fitzharris. All Rights Reserved. See
+[LICENSE](LICENSE) file for details.

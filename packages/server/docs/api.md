@@ -34,16 +34,18 @@ await server.run();
 Formats TypeScript/JavaScript code using `deno fmt`.
 
 **Parameters:**
+
 - `workspacePath` (string): Path to the workspace
 - `files` (string[], optional): Specific files to format
 - `check` (boolean, optional): Only check formatting, don't modify files
 
 **Example:**
+
 ```typescript
 const result = await fmtTool.handler({
   workspacePath: "/path/to/project",
   files: ["src/main.ts"],
-  check: false
+  check: false,
 });
 ```
 
@@ -54,6 +56,7 @@ const result = await fmtTool.handler({
 Lints code using `deno lint`.
 
 **Parameters:**
+
 - `workspacePath` (string): Path to the workspace
 - `files` (string[], optional): Specific files to lint
 - `fix` (boolean, optional): Auto-fix issues where possible
@@ -63,6 +66,7 @@ Lints code using `deno lint`.
 Performs type checking using `deno check`.
 
 **Parameters:**
+
 - `workspacePath` (string): Path to the workspace
 - `files` (string[], optional): Specific files to check
 
@@ -73,6 +77,7 @@ Performs type checking using `deno check`.
 Runs tests using `deno test`.
 
 **Parameters:**
+
 - `workspacePath` (string): Path to the workspace
 - `files` (string[], optional): Specific test files to run
 - `coverage` (boolean, optional): Generate coverage report
@@ -85,6 +90,7 @@ Runs tests using `deno test`.
 Executes Deno scripts.
 
 **Parameters:**
+
 - `workspacePath` (string): Path to the workspace
 - `script` (string): Script file to run
 - `args` (string[], optional): Arguments to pass to the script
@@ -96,6 +102,7 @@ Executes Deno scripts.
 Gets module information using `deno info`.
 
 **Parameters:**
+
 - `workspacePath` (string): Path to the workspace
 - `module` (string): Module to analyze
 
@@ -242,7 +249,7 @@ The server implements several security measures:
 ### Basic Server Setup
 
 ```typescript
-import { DenoMCPServer, allTools } from "@emmettirl/deno-mcp-server";
+import { allTools, DenoMCPServer } from "@emmettirl/deno-mcp-server";
 
 const server = new DenoMCPServer(allTools);
 await server.run();
@@ -251,11 +258,11 @@ await server.run();
 ### Custom Tool Selection
 
 ```typescript
-import { 
-  DenoMCPServer, 
-  fmtTool, 
-  lintTool, 
-  testTool 
+import {
+  DenoMCPServer,
+  fmtTool,
+  lintTool,
+  testTool,
 } from "@emmettirl/deno-mcp-server";
 
 const server = new DenoMCPServer([fmtTool, lintTool, testTool]);
@@ -269,7 +276,7 @@ import { fmtTool } from "@emmettirl/deno-mcp-server";
 
 const result = await fmtTool.handler({
   workspacePath: "/path/to/project",
-  files: ["src/main.ts", "src/utils.ts"]
+  files: ["src/main.ts", "src/utils.ts"],
 });
 
 console.log(result);

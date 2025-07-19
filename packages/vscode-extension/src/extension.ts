@@ -208,8 +208,8 @@ class DenoCommandRunner {
     const config = vscode.workspace.getConfiguration("deno-mcp");
     const denoPath = config.get<string>("denoPath", "deno");
 
-    const cwd =
-      workingDir || vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    const cwd = workingDir ||
+      vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
     if (!cwd) {
       vscode.window.showErrorMessage("No workspace folder found");
       return;

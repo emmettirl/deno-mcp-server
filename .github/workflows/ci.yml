@@ -74,8 +74,8 @@ jobs:
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: packages/vscode-extension/package-lock.json
 
       - name: 📋 Install dependencies
@@ -110,8 +110,8 @@ jobs:
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: packages/vscode-extension/package-lock.json
 
       - name: 📋 Install extension dependencies
@@ -183,6 +183,7 @@ jobs:
 
       - name: 📚 Generate documentation
         run: |
+          mkdir -p docs
           deno doc --json src/main.ts > docs/api.json
           echo "Documentation generated"
 
@@ -199,6 +200,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         deno-version: [1.40.0, latest]
+
+    defaults:
+      run:
+        working-directory: packages/server
 
     steps:
       - name: 📥 Checkout code

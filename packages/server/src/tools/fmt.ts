@@ -76,9 +76,13 @@ async function handleDenoFmt(args: ToolArgs): Promise<Record<string, unknown>> {
     }
 
     if (result.success) {
-      output += check ? "✅ All files are properly formatted!" : "✅ Files formatted successfully!";
+      output += check
+        ? "✅ All files are properly formatted!"
+        : "✅ Files formatted successfully!";
     } else {
-      output += check ? "❌ Some files need formatting" : "❌ Format operation failed";
+      output += check
+        ? "❌ Some files need formatting"
+        : "❌ Format operation failed";
     }
 
     return {
@@ -91,7 +95,9 @@ async function handleDenoFmt(args: ToolArgs): Promise<Record<string, unknown>> {
     return {
       content: [{
         type: "text",
-        text: `Error running deno fmt: ${error instanceof Error ? error.message : String(error)}`,
+        text: `Error running deno fmt: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       }],
     };
   }
@@ -110,7 +116,8 @@ export const fmtTool: ToolDefinition = {
       files: {
         type: "array",
         items: { type: "string" },
-        description: "Specific files to format (optional, formats all if not specified)",
+        description:
+          "Specific files to format (optional, formats all if not specified)",
       },
       check: {
         type: "boolean",

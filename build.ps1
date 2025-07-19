@@ -103,7 +103,8 @@ function Format-Code {
     Write-Host "📝 Formatting code..." -ForegroundColor Yellow
     
     if (-not $ExtOnly) {
-        Invoke-BuildCommand "Server format" "deno" @("fmt") $ServerDir
+        # Format all Deno/TypeScript files from root (includes server package and root files)
+        Invoke-BuildCommand "Deno format (all)" "deno" @("fmt") "."
     }
     
     if (-not $ServerOnly) {

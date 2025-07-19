@@ -1,6 +1,7 @@
 # Security Guide
 
-This document outlines the security features and best practices for the Deno MCP Server.
+This document outlines the security features and best practices for the Deno MCP
+Server.
 
 ## Security Architecture
 
@@ -8,7 +9,8 @@ The Deno MCP Server implements a multi-layered security approach:
 
 1. **Input Validation** - All inputs are validated and sanitized
 2. **Path Restriction** - File access is restricted to allowed paths
-3. **Command Injection Prevention** - All commands are validated before execution
+3. **Command Injection Prevention** - All commands are validated before
+   execution
 4. **Permission Minimization** - Uses minimal Deno permissions required
 5. **Error Information Control** - Error messages don't leak sensitive data
 
@@ -25,14 +27,14 @@ export function validateFilePath(filePath: string): string | null {
   if (filePath.includes("..") || filePath.includes("~")) {
     return "Path traversal not allowed";
   }
-  
+
   // Validate file extensions
   const allowedExtensions = [".ts", ".js", ".json", ".md"];
   const ext = path.extname(filePath);
   if (!allowedExtensions.includes(ext)) {
     return `File extension ${ext} not allowed`;
   }
-  
+
   return null; // Valid
 }
 ```
@@ -68,7 +70,7 @@ The server runs with minimal required permissions:
 // Minimal permissions for formatting
 const permissions = [
   "--allow-read=" + workspacePath,
-  "--allow-write=" + workspacePath
+  "--allow-write=" + workspacePath,
 ];
 
 // Additional permissions only when needed
@@ -110,15 +112,15 @@ if (needsNetwork) {
 
 ### Security Configuration Options
 
-| Option | Description | Default | Security Impact |
-|--------|-------------|---------|-----------------|
-| `allowedPaths` | Directories that can be accessed | `["src/"]` | High - restricts file access |
-| `blockedPaths` | Paths that are explicitly blocked | `[".git/", "node_modules/"]` | High - prevents sensitive file access |
-| `maxFileSize` | Maximum file size for operations | `10MB` | Medium - prevents DoS via large files |
-| `allowedExtensions` | File extensions that can be processed | `[".ts", ".js"]` | Medium - limits attack surface |
-| `maxConcurrentOperations` | Maximum parallel operations | `3` | Low - prevents resource exhaustion |
-| `timeoutMs` | Operation timeout | `30000` | Low - prevents hanging operations |
-| `strictMode` | Enable strict security checks | `false` | High - enables additional validations |
+| Option                    | Description                           | Default                      | Security Impact                       |
+| ------------------------- | ------------------------------------- | ---------------------------- | ------------------------------------- |
+| `allowedPaths`            | Directories that can be accessed      | `["src/"]`                   | High - restricts file access          |
+| `blockedPaths`            | Paths that are explicitly blocked     | `[".git/", "node_modules/"]` | High - prevents sensitive file access |
+| `maxFileSize`             | Maximum file size for operations      | `10MB`                       | Medium - prevents DoS via large files |
+| `allowedExtensions`       | File extensions that can be processed | `[".ts", ".js"]`             | Medium - limits attack surface        |
+| `maxConcurrentOperations` | Maximum parallel operations           | `3`                          | Low - prevents resource exhaustion    |
+| `timeoutMs`               | Operation timeout                     | `30000`                      | Low - prevents hanging operations     |
+| `strictMode`              | Enable strict security checks         | `false`                      | High - enables additional validations |
 
 ## Threat Model
 
@@ -169,7 +171,7 @@ if (needsNetwork) {
    ```bash
    # Good - minimal permissions
    deno run --allow-read=src --allow-write=src script.ts
-   
+
    # Bad - excessive permissions
    deno run --allow-all script.ts
    ```
@@ -209,7 +211,7 @@ if (needsNetwork) {
    ```bash
    # Review configuration regularly
    deno-mcp-server --validate-config
-   
+
    # Check for security updates
    deno upgrade
    ```
@@ -253,11 +255,11 @@ if (needsNetwork) {
    ```dockerfile
    # Use minimal container
    FROM denoland/deno:alpine
-   
+
    # Create non-root user
    RUN adduser -D -s /bin/sh mcpuser
    USER mcpuser
-   
+
    # Copy only necessary files
    COPY --chown=mcpuser:mcpuser src/ /app/src/
    ```
@@ -271,9 +273,9 @@ if (needsNetwork) {
 Deno.test("prevents path traversal", async () => {
   const result = await fmtTool.handler({
     workspacePath: "/safe/path",
-    files: ["../../../etc/passwd"]
+    files: ["../../../etc/passwd"],
   });
-  
+
   assertStringIncludes(result.content[0].text, "Path traversal not allowed");
 });
 
@@ -281,9 +283,9 @@ Deno.test("prevents path traversal", async () => {
 Deno.test("prevents command injection", async () => {
   const result = await runTool.handler({
     workspacePath: "/safe/path",
-    script: "script.ts; rm -rf /"
+    script: "script.ts; rm -rf /",
   });
-  
+
   assertStringIncludes(result.content[0].text, "Invalid script name");
 });
 ```
@@ -320,7 +322,7 @@ If you discover a security vulnerability, please report it responsibly:
 ### Security Response Process
 
 1. **Acknowledgment** - Within 24 hours
-2. **Assessment** - Within 72 hours  
+2. **Assessment** - Within 72 hours
 3. **Fix Development** - Within 1 week for critical issues
 4. **Release** - Emergency release for critical vulnerabilities
 5. **Disclosure** - Public disclosure after fix is available
@@ -333,7 +335,8 @@ The Deno MCP Server follows these security standards:
 
 - **OWASP Top 10** - Addresses common web application security risks
 - **CWE/SANS Top 25** - Mitigates most dangerous software errors
-- **NIST Cybersecurity Framework** - Implements identify, protect, detect, respond, recover
+- **NIST Cybersecurity Framework** - Implements identify, protect, detect,
+  respond, recover
 
 ### Audit Trail
 

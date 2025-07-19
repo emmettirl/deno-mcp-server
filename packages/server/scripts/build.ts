@@ -2,20 +2,20 @@
 
 /**
  * Build script for Deno MCP Server monorepo
- * 
+ *
  * Usage:
  *   deno run --allow-all build.ts [command] [options]
- * 
+ *
  * Commands:
  *   fmt      - Format all code
- *   lint     - Lint all code  
+ *   lint     - Lint all code
  *   check    - Type check all code
  *   test     - Run all tests
  *   build    - Build all packages
  *   package  - Package extension
  *   all      - Run all commands (fmt, lint, check, test, build, package)
  *   clean    - Clean build artifacts
- * 
+ *
  * Options:
  *   --server-only    - Only run for server package
  *   --ext-only       - Only run for extension package
@@ -42,7 +42,7 @@ class BuildRunner {
 
   async run(command: string): Promise<void> {
     console.log(`🚀 Starting ${command} for Deno MCP Server monorepo...`);
-    
+
     switch (command) {
       case "fmt":
         await this.formatCode();
@@ -72,54 +72,84 @@ class BuildRunner {
         this.showHelp();
         Deno.exit(1);
     }
-    
+
     console.log(`✅ ${command} completed successfully!`);
   }
 
   private async formatCode(): Promise<void> {
     console.log("📝 Formatting code...");
-    
+
     if (!this.options.extOnly) {
       await this.runCommand("Server format", "deno", ["fmt"], this.serverDir);
     }
-    
+
     if (!this.options.serverOnly) {
-      await this.runCommand("Extension format", "npm", ["run", "format"], this.extDir);
+      await this.runCommand(
+        "Extension format",
+        "npm",
+        ["run", "format"],
+        this.extDir,
+      );
     }
   }
 
   private async lintCode(): Promise<void> {
     console.log("🔍 Linting code...");
-    
+
     if (!this.options.extOnly) {
       await this.runCommand("Server lint", "deno", ["lint"], this.serverDir);
     }
-    
+
     if (!this.options.serverOnly) {
-      await this.runCommand("Extension lint", "npm", ["run", "lint"], this.extDir);
+      await this.runCommand(
+        "Extension lint",
+        "npm",
+        ["run", "lint"],
+        this.extDir,
+      );
     }
   }
 
   private async typeCheck(): Promise<void> {
     console.log("🔎 Type checking...");
-    
+
     if (!this.options.extOnly) {
-      await this.runCommand("Server check", "deno", ["check", "src/main.ts"], this.serverDir);
-      await this.runCommand("Server check mod", "deno", ["check", "mod.ts"], this.serverDir);
+      await this.runCommand(
+        "Server check",
+        "deno",
+        ["check", "src/main.ts"],
+        this.serverDir,
+      );
+      await this.runCommand(
+        "Server check mod",
+        "deno",
+        ["check", "mod.ts"],
+        this.serverDir,
+      );
     }
-    
+
     if (!this.options.serverOnly) {
-      await this.runCommand("Extension check", "npm", ["run", "check-types"], this.extDir);
+      await this.runCommand(
+        "Extension check",
+        "npm",
+        ["run", "check-types"],
+        this.extDir,
+      );
     }
   }
 
   private async runTests(): Promise<void> {
     console.log("🧪 Running tests...");
-    
+
     if (!this.options.extOnly) {
-      await this.runCommand("Server tests", "deno", ["test", "--allow-all"], this.serverDir);
+      await this.runCommand(
+        "Server tests",
+        "deno",
+        ["test", "--allow-all"],
+        this.serverDir,
+      );
     }
-    
+
     if (!this.options.serverOnly) {
       await this.runCommand("Extension tests", "npm", ["test"], this.extDir);
     }
@@ -127,49 +157,77 @@ class BuildRunner {
 
   private async build(): Promise<void> {
     console.log("🏗️ Building packages...");
-    
+
     if (!this.options.extOnly) {
       // Server doesn't need explicit build, but we can cache dependencies
-      await this.runCommand("Server cache", "deno", ["cache", "--reload", "mod.ts"], this.serverDir);
+      await this.runCommand("Server cache", "deno", [
+        "cache",
+        "--reload",
+        "mod.ts",
+      ], this.serverDir);
     }
-    
+
     if (!this.options.serverOnly) {
-      await this.runCommand("Extension build", "npm", ["run", "compile"], this.extDir);
+      await this.runCommand(
+        "Extension build",
+        "npm",
+        ["run", "compile"],
+        this.extDir,
+      );
     }
   }
 
   private async package(): Promise<void> {
     console.log("📦 Packaging extension...");
-    
+
     if (this.options.serverOnly) {
       console.log("⚠️ Skipping package (server-only mode)");
       return;
     }
-    
+
     // Ensure extension is built first
-    await this.runCommand("Extension compile", "npm", ["run", "compile"], this.extDir);
-    
+    await this.runCommand(
+      "Extension compile",
+      "npm",
+      ["run", "compile"],
+      this.extDir,
+    );
+
     // Check if vsce is available
     try {
-      await this.runCommand("Check vsce", "npx", ["vsce", "--version"], this.extDir);
+      await this.runCommand(
+        "Check vsce",
+        "npx",
+        ["vsce", "--version"],
+        this.extDir,
+      );
     } catch {
       console.log("📥 Installing vsce...");
-      await this.runCommand("Install vsce", "npm", ["install", "-g", "@vscode/vsce"], this.extDir);
+      await this.runCommand("Install vsce", "npm", [
+        "install",
+        "-g",
+        "@vscode/vsce",
+      ], this.extDir);
     }
-    
+
     // Package extension
-    await this.runCommand("Package extension", "npx", ["vsce", "package"], this.extDir);
+    await this.runCommand(
+      "Package extension",
+      "npx",
+      ["vsce", "package"],
+      this.extDir,
+    );
   }
 
   private async runAll(): Promise<void> {
     console.log("🎯 Running all commands...");
-    
+
     await this.formatCode();
     await this.lintCode();
     await this.typeCheck();
     await this.runTests();
     await this.build();
-    
+
     if (!this.options.serverOnly) {
       await this.package();
     }
@@ -177,7 +235,7 @@ class BuildRunner {
 
   private async clean(): Promise<void> {
     console.log("🧹 Cleaning build artifacts...");
-    
+
     const pathsToClean = [
       "./packages/vscode-extension/out",
       "./packages/vscode-extension/node_modules",
@@ -185,7 +243,7 @@ class BuildRunner {
       "./packages/vscode-extension/*.vsix",
       "./packages/server/.deno",
     ];
-    
+
     for (const path of pathsToClean) {
       if (await exists(path)) {
         console.log(`  Removing ${path}...`);
@@ -198,10 +256,12 @@ class BuildRunner {
     name: string,
     cmd: string,
     args: string[],
-    cwd?: string
+    cwd?: string,
   ): Promise<void> {
     if (this.options.verbose) {
-      console.log(`  Running: ${cmd} ${args.join(" ")} ${cwd ? `(in ${cwd})` : ""}`);
+      console.log(
+        `  Running: ${cmd} ${args.join(" ")} ${cwd ? `(in ${cwd})` : ""}`,
+      );
     } else {
       console.log(`  ${name}...`);
     }
@@ -280,7 +340,7 @@ if (import.meta.main) {
   const command = args._[0] as string;
   const options: BuildOptions = {
     serverOnly: args["server-only"] || false,
-    extOnly: args["ext-only"] || false,  
+    extOnly: args["ext-only"] || false,
     verbose: args.verbose || false,
   };
 

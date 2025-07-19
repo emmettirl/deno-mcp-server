@@ -3,25 +3,25 @@ name: 🚀 Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., 1.0.0)'
+        description: "Release version (e.g., 1.0.0)"
         required: true
         type: string
       create_release:
-        description: 'Create GitHub release'
+        description: "Create GitHub release"
         required: false
         default: true
         type: boolean
       release_server:
-        description: 'Release server binary'
+        description: "Release server binary"
         required: false
         default: true
         type: boolean
       release_extension:
-        description: 'Release VS Code extension'
+        description: "Release VS Code extension"
         required: false
         default: true
         type: boolean
@@ -49,8 +49,8 @@ jobs:
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: packages/vscode-extension/package-lock.json
 
       - name: 📋 Install extension dependencies
@@ -147,8 +147,8 @@ jobs:
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: packages/vscode-extension/package-lock.json
 
       - name: 📋 Install dependencies
@@ -252,7 +252,7 @@ jobs:
           - **Docker Images** - Production-ready containers
           - **Security Features** - Multi-layered security approach
 
-          #### 🎯 VS Code Extension  
+          #### 🎯 VS Code Extension
           - **Private Extension** - Seamless VS Code integration
           - **70+ Tests** - Comprehensive test coverage
           - **Auto-detection** - Finds packaged server automatically
@@ -270,9 +270,9 @@ jobs:
           ```bash
           # Download for your platform
           # Windows: deno-mcp-server-x86_64-pc-windows-msvc.exe
-          # Linux: deno-mcp-server-x86_64-unknown-linux-gnu  
+          # Linux: deno-mcp-server-x86_64-unknown-linux-gnu
           # macOS: deno-mcp-server-x86_64-apple-darwin
-          
+
           # Make executable (Linux/macOS)
           chmod +x deno-mcp-server-*
           ```

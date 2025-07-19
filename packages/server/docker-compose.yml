@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   deno-mcp-server:
@@ -15,7 +15,7 @@ services:
     stdin_open: true
     tty: true
     restart: unless-stopped
-    
+
   # Development version with live reload
   deno-mcp-server-dev:
     image: denoland/deno:alpine-1.40.0

@@ -8,7 +8,7 @@
     },
     "vscode-extension": {
       "version": "0.0.1",
-      "name": "deno-mcp-extension", 
+      "name": "deno-mcp-extension",
       "description": "VS Code extension for Deno MCP Server"
     }
   },

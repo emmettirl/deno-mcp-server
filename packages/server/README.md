@@ -67,7 +67,10 @@ deno install --allow-read --allow-run --allow-write --name deno-mcp-server \
 
 ```typescript
 // Import in your Deno project
-import { DenoMCPServer, allTools } from "https://deno.land/x/deno_mcp_server/mod.ts";
+import {
+  allTools,
+  DenoMCPServer,
+} from "https://deno.land/x/deno_mcp_server/mod.ts";
 
 const server = new DenoMCPServer(allTools);
 await server.run();
@@ -184,26 +187,28 @@ The Deno MCP Server is designed to be easily importable and customizable:
 import * as DenoMCP from "https://deno.land/x/deno_mcp_server/mod.ts";
 
 // Import specific components
-import { 
-  DenoMCPServer, 
-  allTools, 
-  fmtTool, 
-  lintTool 
+import {
+  allTools,
+  DenoMCPServer,
+  fmtTool,
+  lintTool,
 } from "https://deno.land/x/deno_mcp_server/mod.ts";
 
 // Import types
-import type { 
-  ToolDefinition, 
-  MCPRequest, 
-  MCPResponse 
+import type {
+  MCPRequest,
+  MCPResponse,
+  ToolDefinition,
 } from "https://deno.land/x/deno_mcp_server/mod.ts";
 ```
 
 ### Available Exports
 
 - **Core**: `DenoMCPServer`, `main`, `cli`
-- **Tools**: `allTools`, `fmtTool`, `lintTool`, `checkTool`, `testTool`, `runTool`, `infoTool`
-- **Tool Groups**: `formattingTools`, `validationTools`, `testingTools`, `executionTools`, `infoTools`
+- **Tools**: `allTools`, `fmtTool`, `lintTool`, `checkTool`, `testTool`,
+  `runTool`, `infoTool`
+- **Tool Groups**: `formattingTools`, `validationTools`, `testingTools`,
+  `executionTools`, `infoTools`
 - **Utilities**: `executeDeno`, `findWorkspaceRoot`, `loadConfig`
 - **Validation**: `validateToolArgs`, `validateFilePaths`
 - **Types**: `ToolDefinition`, `MCPRequest`, `MCPResponse`, `ToolArgs`
@@ -220,18 +225,18 @@ const customTool: ToolDefinition = {
     type: "object",
     properties: {
       workspacePath: { type: "string" },
-      customArg: { type: "string" }
-    }
+      customArg: { type: "string" },
+    },
   },
   handler: async (args) => {
     // Your tool implementation
     return {
       content: [{
         type: "text",
-        text: "Tool executed successfully"
-      }]
+        text: "Tool executed successfully",
+      }],
     };
-  }
+  },
 };
 ```
 

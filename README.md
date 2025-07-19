@@ -1,22 +1,24 @@
 # 🦕 Deno MCP Server Monorepo
 
-A comprehensive monorepo containing a secure Model Context Protocol (MCP) server built with Deno and a VS Code extension for seamless integration.
+A comprehensive monorepo containing a secure Model Context Protocol (MCP) server
+built with Deno and a VS Code extension for seamless integration.
 
 [![CI Status](https://github.com/your-username/deno-mcp-server/workflows/CI/badge.svg)](https://github.com/your-username/deno-mcp-server/actions)
 [![Release](https://github.com/your-username/deno-mcp-server/workflows/🚀%20Release/badge.svg)](https://github.com/your-username/deno-mcp-server/releases)
 
 ## 📦 Packages
 
-| Package | Description | Version | Tests |
-|---------|-------------|---------|-------|
-| **[Server](packages/server/)** | Deno MCP Server with 6 tools | ![Deno](https://img.shields.io/badge/deno-1.40+-blue) | 🧪 Comprehensive |
-| **[VS Code Extension](packages/vscode-extension/)** | Private extension with auto-detection | ![Node](https://img.shields.io/badge/node-18+-green) | 🧪 70+ Tests |
+| Package                                             | Description                           | Version                                               | Tests            |
+| --------------------------------------------------- | ------------------------------------- | ----------------------------------------------------- | ---------------- |
+| **[Server](packages/server/)**                      | Deno MCP Server with 6 tools          | ![Deno](https://img.shields.io/badge/deno-1.40+-blue) | 🧪 Comprehensive |
+| **[VS Code Extension](packages/vscode-extension/)** | Private extension with auto-detection | ![Node](https://img.shields.io/badge/node-18+-green)  | 🧪 70+ Tests     |
 
 ## 🚀 Quick Start
 
 ### For Users
 
 **Download Latest Release:**
+
 ```bash
 # Get the latest release
 curl -s https://api.github.com/repos/your-username/deno-mcp-server/releases/latest \
@@ -29,6 +31,7 @@ code --install-extension deno-mcp-extension.vsix
 ```
 
 **Using Docker:**
+
 ```bash
 docker pull ghcr.io/your-username/deno-mcp-server/server:latest
 docker run -it ghcr.io/your-username/deno-mcp-server/server:latest
@@ -79,6 +82,7 @@ Options:
 ### Release Triggers
 
 **Automatic (Tag-based):**
+
 ```bash
 git tag v1.2.3
 git push origin v1.2.3
@@ -86,6 +90,7 @@ git push origin v1.2.3
 ```
 
 **Manual (GitHub Actions):**
+
 - Go to Actions → 🚀 Release → Run workflow
 - Configure what to release (server, extension, both)
 - Set version and options
@@ -125,7 +130,7 @@ graph LR
 ## 🔒 Security Features
 
 - **Multi-layered Security**: Permission-based access control
-- **Input Validation**: Comprehensive sanitization 
+- **Input Validation**: Comprehensive sanitization
 - **Secure Operations**: Safe file and process handling
 - **Container Security**: Minimal attack surface
 - **Automated Scanning**: Security checks in CI/CD
@@ -164,13 +169,15 @@ cd packages/vscode-extension && npm run test:coverage
 ## 🏆 Features
 
 ### Server Package
+
 - 🛠️ **6 MCP Tools**: fmt, lint, check, test, run, info
 - 🔒 **Secure by Default**: Multi-layered permissions
 - 🐳 **Docker Ready**: Production containers
 - 📦 **Cross-platform**: Windows, Linux, macOS
 - ⚡ **Fast**: Native Deno performance
 
-### VS Code Extension  
+### VS Code Extension
+
 - 🎯 **Auto-detection**: Finds packaged servers
 - 📊 **Status Integration**: Real-time server status
 - 🧪 **70+ Tests**: Comprehensive coverage
@@ -180,9 +187,10 @@ cd packages/vscode-extension && npm run test:coverage
 ## 📖 Documentation
 
 - **[BUILD.md](BUILD.md)** - Comprehensive build instructions
-- **[Server Docs](packages/server/)** - MCP server implementation details  
+- **[Server Docs](packages/server/)** - MCP server implementation details
 - **[Extension Docs](packages/vscode-extension/)** - VS Code extension guide
-- **[Security Guide](packages/server/docs/security.md)** - Security best practices
+- **[Security Guide](packages/server/docs/security.md)** - Security best
+  practices
 - **[API Reference](packages/server/docs/api.md)** - Complete API documentation
 
 ## 🤝 Contributing
@@ -190,13 +198,14 @@ cd packages/vscode-extension && npm run test:coverage
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make changes and run tests (`.\build.ps1 test`)
-4. Commit changes (`git commit -m 'feat: add amazing feature'`)  
+4. Commit changes (`git commit -m 'feat: add amazing feature'`)
 5. Push to branch (`git push origin feature/amazing-feature`)
 6. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
+for details.
 
 ---
 
