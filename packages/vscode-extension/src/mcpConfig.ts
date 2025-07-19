@@ -149,11 +149,20 @@ export class MCPConfigurationManager {
     }
 
     // Auto-detect: try server package for the packaged MCP server
+    // Priority order: cli.ts (executable) -> src/main.ts (executable) -> mod.ts (exports only)
+    const serverCliPath = path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "server",
+      "cli.ts",
+    );
     const serverMainPath = path.resolve(
       __dirname,
       "..",
       "..",
       "server",
+      "src",
       "main.ts",
     );
     const serverModPath = path.resolve(
@@ -165,9 +174,21 @@ export class MCPConfigurationManager {
     );
 
     try {
-      if (fs.existsSync(serverMainPath)) {
+      // Prefer cli.ts as it's the proper executable entry point with CLI args
+      if (fs.existsSync(serverCliPath)) {
+        this.outputChannel.appendLine(
+          `Using MCP server CLI entry point: ${serverCliPath}`,
+        );
+        return serverCliPath;
+      } else if (fs.existsSync(serverMainPath)) {
+        this.outputChannel.appendLine(
+          `Using MCP server main entry point: ${serverMainPath}`,
+        );
         return serverMainPath;
       } else if (fs.existsSync(serverModPath)) {
+        this.outputChannel.appendLine(
+          `WARNING: Using mod.ts which is export-only, may not work: ${serverModPath}`,
+        );
         return serverModPath;
       }
     } catch (error) {
@@ -175,6 +196,7 @@ export class MCPConfigurationManager {
     }
 
     // Fallback to mock server
+    this.outputChannel.appendLine("Falling back to mock server");
     return path.join(this.context.extensionPath, "mock-mcp-server.ts");
   }
 
