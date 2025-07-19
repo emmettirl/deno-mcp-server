@@ -1,0 +1,163 @@
+{
+  "name": "deno-mcp-extension",
+  "displayName": "Deno MCP Extension",
+  "description": "Private VS Code extension integrating Deno MCP server for enhanced development workflows",
+  "version": "0.0.1",
+  "publisher": "your-publisher",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emmettirl/deno-mcp-server.git"
+  },
+  "engines": {
+    "vscode": "^1.102.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Formatters",
+    "Linters",
+    "Testing",
+    "Other"
+  ],
+  "keywords": [
+    "deno",
+    "mcp",
+    "typescript",
+    "javascript",
+    "formatting",
+    "linting",
+    "development"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:javascript",
+    "workspaceContains:deno.json",
+    "workspaceContains:deno.jsonc"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "deno-mcp.format",
+        "title": "Format Code",
+        "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.lint",
+        "title": "Lint Code",
+        "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.check",
+        "title": "Type Check",
+        "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.test",
+        "title": "Run Tests",
+        "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.cache",
+        "title": "Cache Dependencies",
+        "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.info",
+        "title": "Show Info",
+        "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.startServer",
+        "title": "Start MCP Server",
+        "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.stopServer",
+        "title": "Stop MCP Server",
+        "category": "Deno MCP"
+      }
+    ],
+    "configuration": {
+      "title": "Deno MCP Extension",
+      "properties": {
+        "deno-mcp.denoPath": {
+          "type": "string",
+          "default": "deno",
+          "description": "Path to Deno executable"
+        },
+        "deno-mcp.mcpServerPath": {
+          "type": "string",
+          "description": "Path to MCP server file (auto-detects ../mod.ts or ../main.ts if not specified)"
+        },
+        "deno-mcp.mcpServerPort": {
+          "type": "number",
+          "default": 3000,
+          "description": "Port for MCP server"
+        },
+        "deno-mcp.enableAutoFormat": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic formatting on save"
+        },
+        "deno-mcp.enableAutoLint": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic linting"
+        },
+        "deno-mcp.useHttpTransport": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use HTTP transport for MCP server (default: stdio)"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "deno-mcp.format",
+        "key": "ctrl+shift+f",
+        "mac": "cmd+shift+f",
+        "when": "editorTextFocus && editorLangId == typescript"
+      },
+      {
+        "command": "deno-mcp.lint",
+        "key": "ctrl+shift+l",
+        "mac": "cmd+shift+l",
+        "when": "editorTextFocus && editorLangId == typescript"
+      },
+      {
+        "command": "deno-mcp.test",
+        "key": "ctrl+shift+t",
+        "mac": "cmd+shift+t",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "format": "eslint src --fix",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.102.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "esbuild": "^0.25.3",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.3",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}

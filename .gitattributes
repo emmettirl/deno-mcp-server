@@ -1,0 +1,48 @@
+# Ensure LF line endings for all text files
+* text=auto eol=lf
+
+# Specific file types
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.txt text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.bat text eol=lf
+*.dockerfile text eol=lf
+Dockerfile text eol=lf
+
+# Configuration files
+*.config.* text eol=lf
+*.rc text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.editorconfig text eol=lf
+
+# Package files
+package.json text eol=lf
+package-lock.json text eol=lf
+deno.json text eol=lf
+deno.lock text eol=lf
+tsconfig.json text eol=lf
+
+# Binary files (should not be processed)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.tar.gz binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.vsix binary
+*.exe binary
