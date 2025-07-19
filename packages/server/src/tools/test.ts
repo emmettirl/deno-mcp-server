@@ -6,8 +6,7 @@ import { executeDeno, findWorkspaceRoot } from "../utils.ts";
 async function handleDenoTest(
   args: ToolArgs,
 ): Promise<Record<string, unknown>> {
-  const { workspacePath, files, watch, coverage, filter, parallel, failFast } =
-    args;
+  const { workspacePath, files, watch, coverage, filter, parallel, failFast } = args;
 
   try {
     const workspaceRoot = await findWorkspaceRoot(workspacePath);
@@ -86,9 +85,7 @@ async function handleDenoTest(
     return {
       content: [{
         type: "text",
-        text: `Error running deno test: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+        text: `Error running deno test: ${error instanceof Error ? error.message : String(error)}`,
       }],
     };
   }
@@ -107,8 +104,7 @@ export const testTool: ToolDefinition = {
       files: {
         type: "array",
         items: { type: "string" },
-        description:
-          "Specific test files to run (optional, runs all if not specified)",
+        description: "Specific test files to run (optional, runs all if not specified)",
       },
       watch: {
         type: "boolean",

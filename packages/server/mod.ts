@@ -41,11 +41,7 @@ export {
 } from "./src/tools/index.ts";
 
 // Utilities
-export {
-  clearWorkspaceCache,
-  executeDeno,
-  findWorkspaceRoot,
-} from "./src/utils.ts";
+export { clearWorkspaceCache, executeDeno, findWorkspaceRoot } from "./src/utils.ts";
 
 // Configuration
 export { loadConfig } from "./src/config.ts";
