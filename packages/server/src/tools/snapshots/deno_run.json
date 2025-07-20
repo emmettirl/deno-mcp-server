@@ -1,0 +1,43 @@
+{
+  "name": "deno_run",
+  "description": "Run Deno scripts with specified permissions",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "workspacePath": {
+        "type": "string",
+        "description": "Path to the workspace directory"
+      },
+      "script": {
+        "type": "string",
+        "description": "Script file to run"
+      },
+      "permissions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Deno permissions (e.g., --allow-read, --allow-net)"
+      },
+      "watch": {
+        "type": "boolean",
+        "default": false,
+        "description": "Watch for changes and restart"
+      },
+      "args": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Arguments to pass to the script"
+      }
+    },
+    "required": [
+      "workspacePath",
+      "script"
+    ]
+  },
+  "version": "1.0.0",
+  "lastUpdated": "2025-07-20T17:24:33.173Z",
+  "checksum": "68ef7343"
+}

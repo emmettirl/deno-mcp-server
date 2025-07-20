@@ -127,10 +127,23 @@ deno-mcp-server/
 
 ### 5. Build and Distribution
 
-**TO BE ANALYZED**: Different approaches to packaging and distribution
+**ANALYZED**: Different approaches to packaging and distribution
 
-- GitHub: Docker containers, Go binaries, make-based build system
-- Ours: Deno tasks, VS Code extension packaging, PowerShell scripts
+- **GitHub**:
+  - **Build System**: GoReleaser for cross-platform binaries (Windows, macOS, Linux)
+  - **CI/CD**: GitHub Actions with matrix builds across multiple OS
+  - **Docker**: Multi-stage Dockerfile with distroless base image for minimal attack surface
+  - **Distribution**: GitHub Container Registry (ghcr.io), GitHub Releases with automated changelog
+  - **Scripts**: Shell scripts in `script/` directory for linting, testing, license checks
+  - **Versioning**: ldflags injection for version/commit/date metadata into binary
+  - **Security**: Cosign signing, SLSA provenance, dependency license tracking
+- **Ours**:
+  - **Build System**: Deno tasks for server, npm scripts + esbuild for VS Code extension
+  - **CI/CD**: Basic GitHub Actions, separate workflows for each package
+  - **Distribution**: VS Code Marketplace (.vsix), Deno direct import via GitHub
+  - **Scripts**: Deno tasks and npm scripts, some PowerShell for Windows compatibility
+  - **Versioning**: JSON-based version management, manual releases
+  - **Security**: Deno's built-in security model, minimal dependencies
 
 ### 6. Testing Strategy
 

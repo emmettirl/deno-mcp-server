@@ -36,7 +36,10 @@
     "release:minor": "deno run --allow-read --allow-write --allow-run scripts/release.ts --type minor",
     "release:major": "deno run --allow-read --allow-write --allow-run scripts/release.ts --type major",
     "install": "deno install --allow-read --allow-run --allow-write --name deno-mcp-server cli.ts",
-    "verify": "deno run --allow-read --allow-write --allow-run scripts/verify-package.ts"
+    "verify": "deno run --allow-read --allow-write --allow-run scripts/verify-package.ts",
+    "snapshots:generate": "deno run --allow-read --allow-write src/tools/generate-snapshots.ts generate",
+    "snapshots:validate": "deno run --allow-read --allow-write src/tools/generate-snapshots.ts validate",
+    "snapshots:update": "deno run --allow-read --allow-write src/tools/generate-snapshots.ts both"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1",

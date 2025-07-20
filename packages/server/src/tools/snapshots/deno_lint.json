@@ -1,0 +1,38 @@
+{
+  "name": "deno_lint",
+  "description": "Lint Deno TypeScript/JavaScript code using deno lint. Lints entire project when no specific files are provided.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "workspacePath": {
+        "type": "string",
+        "description": "Path to the workspace directory"
+      },
+      "files": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Specific files to lint (optional, lints entire project if not specified)"
+      },
+      "fix": {
+        "type": "boolean",
+        "default": false,
+        "description": "Automatically fix linting issues where possible"
+      },
+      "rules": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Specific lint rules to include (optional)"
+      }
+    },
+    "required": [
+      "workspacePath"
+    ]
+  },
+  "version": "1.0.0",
+  "lastUpdated": "2025-07-20T17:24:33.168Z",
+  "checksum": "14c2161d"
+}

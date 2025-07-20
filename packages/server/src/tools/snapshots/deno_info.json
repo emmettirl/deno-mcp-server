@@ -1,0 +1,28 @@
+{
+  "name": "deno_info",
+  "description": "Get information about Deno modules and dependencies",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "workspacePath": {
+        "type": "string",
+        "description": "Path to the workspace directory"
+      },
+      "file": {
+        "type": "string",
+        "description": "Specific file to get info about (optional)"
+      },
+      "json": {
+        "type": "boolean",
+        "default": false,
+        "description": "Output in JSON format"
+      }
+    },
+    "required": [
+      "workspacePath"
+    ]
+  },
+  "version": "1.0.0",
+  "lastUpdated": "2025-07-20T17:24:33.176Z",
+  "checksum": "69ccc000"
+}
