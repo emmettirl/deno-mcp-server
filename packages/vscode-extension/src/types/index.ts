@@ -54,15 +54,6 @@ export interface IDenoCommandRunner {
 }
 
 /**
- * MCP Configuration Manager interface
- */
-export interface IMCPConfigurationManager {
-  setupMCPConfiguration(): Promise<void>;
-  removeMCPConfiguration(): Promise<void>;
-  updateMCPConfiguration(): Promise<void>;
-}
-
-/**
  * Extension managers container
  */
 export interface ExtensionManagers {

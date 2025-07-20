@@ -1,8 +1,6 @@
 /**
- * Configuration utilities for MCP configuration management
+ * Configuration utilities - simplified to only include path resolution
+ * MCP server configuration is now handled by DenoMcpServerDefinitionProvider
  */
 
-export { findMCPServerPath, getMCPConfigPath } from "./pathResolver";
-export { createMCPConfig, loadMCPConfig, mergeDenoMCPConfig } from "./configLoader";
-export { saveMCPConfig } from "./configSaver";
-export { getDenoMCPServerConfig } from "./serverConfigGenerator";
+export { getDenoExecutablePath, getWorkspaceRootPath } from "./pathResolver";

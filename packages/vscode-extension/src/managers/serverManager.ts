@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "path";
+import * as fs from "fs";
 import { ChildProcess, spawn } from "child_process";
 import { IMCPServerManager, ServerCommand } from "../types";
 import {
@@ -64,7 +65,6 @@ export class MCPServerManager implements IMCPServerManager {
     );
 
     try {
-      const fs = require("fs");
       if (fs.existsSync(serverMainPath)) {
         this.outputChannel.appendLine(
           `Using packaged MCP server (main.ts): ${serverMainPath}`,
@@ -83,16 +83,12 @@ export class MCPServerManager implements IMCPServerManager {
       );
     }
 
-    // Fallback to mock server for development/testing
-    // Use extension context to get the correct path
-    const mockServerPath = path.join(
-      this.context.extensionPath,
-      SERVER_FILES.MOCK_SERVER,
-    );
+    // If no local server found, use remote version
+    const remoteServerUrl = "https://deno.land/x/deno_mcp_server/src/main.ts";
     this.outputChannel.appendLine(
-      `Using mock server as fallback: ${mockServerPath}`,
+      `Using remote server as fallback: ${remoteServerUrl}`,
     );
-    return mockServerPath;
+    return remoteServerUrl;
   }
 
   private buildServerCommand(
