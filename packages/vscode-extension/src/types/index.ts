@@ -25,20 +25,11 @@ export interface ExtensionConfig {
 }
 
 /**
- * Server command configuration
+ * Server command configuration (kept for potential future use)
  */
 export interface ServerCommand {
   args: string[];
   env: Record<string, string>;
-}
-
-/**
- * MCP Server Manager interface
- */
-export interface IMCPServerManager {
-  startServer(): Promise<void>;
-  stopServer(): Promise<void>;
-  showOutput(): void;
 }
 
 /**
@@ -54,10 +45,9 @@ export interface IDenoCommandRunner {
 }
 
 /**
- * Extension managers container
+ * Extension managers container (cleaned up to remove legacy server manager)
  */
 export interface ExtensionManagers {
-  serverManager: IMCPServerManager;
   commandRunner: IDenoCommandRunner;
   outputChannel: vscode.OutputChannel;
   mcpServerDefinitionProvider: DenoMcpServerDefinitionProvider;

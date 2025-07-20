@@ -1,14 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { MCPServerManager } from "./managers/mcpServerManager";
 import { DenoCommandRunner } from "./commands/denoCommandRunner";
 import { CommandRegistry } from "./commands/commandRegistry";
 import { DenoMcpServerDefinitionProvider } from "./services/mcpServerDefinitionProvider";
 import { UpdateCheckerService } from "./services/updateChecker";
 import { ExtensionManagers } from "./types";
 
-let mcpServerManager: MCPServerManager;
 let denoCommandRunner: DenoCommandRunner;
 let mcpServerDefinitionProvider: DenoMcpServerDefinitionProvider;
 let updateCheckerService: UpdateCheckerService;
@@ -20,8 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
   const outputChannel = vscode.window.createOutputChannel("Deno MCP");
   context.subscriptions.push(outputChannel);
 
-  // Initialize managers
-  mcpServerManager = new MCPServerManager(context);
+  // Initialize command runner
   denoCommandRunner = new DenoCommandRunner(outputChannel);
 
   // Initialize MCP Server Definition Provider (replaces direct config file manipulation)
@@ -40,9 +37,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(updateCheckerService);
   updateCheckerService.initialize();
 
-  // Create managers object for command registry
+  // Create managers object for command registry (no longer includes legacy server manager)
   const managers: ExtensionManagers = {
-    serverManager: mcpServerManager,
     commandRunner: denoCommandRunner,
     outputChannel: outputChannel,
     mcpServerDefinitionProvider: mcpServerDefinitionProvider,
@@ -76,7 +72,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 // This method is called when your extension is deactivated
 export function deactivate() {
-  mcpServerManager?.stopServer();
   mcpServerDefinitionProvider?.dispose();
   updateCheckerService?.dispose();
 }

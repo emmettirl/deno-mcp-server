@@ -1,5 +1,5 @@
 /**
- * Extension command IDs
+ * Extension command IDs (cleaned up to remove legacy server management commands)
  */
 export const COMMANDS = {
   FORMAT: "deno-mcp.format",
@@ -8,9 +8,6 @@ export const COMMANDS = {
   TEST: "deno-mcp.test",
   CACHE: "deno-mcp.cache",
   INFO: "deno-mcp.info",
-  START_SERVER: "deno-mcp.startServer",
-  STOP_SERVER: "deno-mcp.stopServer",
-  SHOW_STATUS: "deno-mcp.showStatus",
   CONFIGURE_MCP: "deno-mcp.configureMCP",
   CHECK_UPDATES: "deno-mcp.checkUpdates",
   VIEW_RELEASES: "deno-mcp.viewReleases",

@@ -13,7 +13,7 @@ export class CommandRegistry {
   ) {}
 
   /**
-   * Register all extension commands
+   * Register all extension commands (cleaned up to remove legacy server management)
    */
   registerAllCommands(): void {
     const commands: Array<[string, CommandHandler]> = [
@@ -23,9 +23,6 @@ export class CommandRegistry {
       [COMMANDS.TEST, this.handleTestCommand.bind(this)],
       [COMMANDS.CACHE, this.handleCacheCommand.bind(this)],
       [COMMANDS.INFO, this.handleInfoCommand.bind(this)],
-      [COMMANDS.START_SERVER, this.handleStartServerCommand.bind(this)],
-      [COMMANDS.STOP_SERVER, this.handleStopServerCommand.bind(this)],
-      [COMMANDS.SHOW_STATUS, this.handleShowStatusCommand.bind(this)],
       [COMMANDS.CONFIGURE_MCP, this.handleConfigureMCPCommand.bind(this)],
       [COMMANDS.CHECK_UPDATES, this.handleCheckUpdatesCommand.bind(this)],
       [COMMANDS.VIEW_RELEASES, this.handleViewReleasesCommand.bind(this)],
@@ -107,18 +104,6 @@ export class CommandRegistry {
       const errorMsg = error instanceof Error ? error.message : String(error);
       vscode.window.showErrorMessage(`Info failed: ${errorMsg}`);
     }
-  }
-
-  private handleStartServerCommand(): void {
-    this.managers.serverManager.startServer();
-  }
-
-  private handleStopServerCommand(): void {
-    this.managers.serverManager.stopServer();
-  }
-
-  private handleShowStatusCommand(): void {
-    this.managers.serverManager.showOutput();
   }
 
   private async handleConfigureMCPCommand(): Promise<void> {
