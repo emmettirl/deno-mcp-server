@@ -105,7 +105,9 @@ export class UpdateCheckOrchestrator {
     includePreReleases: boolean,
   ): Promise<GitHubRelease | null> {
     try {
-      const releases = await this.githubApi.makeGitHubApiRequest("/releases");
+      const releases = await this.githubApi.makeGitHubApiRequest(
+        "/releases",
+      );
 
       if (!releases || releases.length === 0) {
         return null;

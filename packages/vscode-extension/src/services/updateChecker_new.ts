@@ -205,22 +205,12 @@ export class UpdateCheckerService {
   }
 
   /**
-   * @deprecated For testing compatibility only - use VersionComparator.compareVersions directly
-   */
-  private compareVersions(current: string, latest: string): number {
-    const { VersionComparator } = require("../utils/VersionComparator");
-    return VersionComparator.compareVersions(current, latest);
-  }
-
-  /**
    * @deprecated For testing compatibility only
    */
   private async fetchLatestRelease(includePreReleases: boolean) {
     // This method is used by tests - keep for compatibility
     const releases = await this.githubApi.makeGitHubApiRequest("/releases");
-    if (!releases || releases.length === 0) {
-      return null;
-    }
+    if (!releases || releases.length === 0) return null;
 
     const filteredReleases = includePreReleases
       ? releases

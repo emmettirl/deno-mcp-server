@@ -51,7 +51,9 @@ export class UpdateScheduler {
     // Schedule the next check
     this.scheduledTimeout = setTimeout(async () => {
       try {
-        this.outputChannel.appendLine("Running scheduled update check...");
+        this.outputChannel.appendLine(
+          "Running scheduled update check...",
+        );
         await updateCheckCallback();
 
         // Reschedule for the next interval

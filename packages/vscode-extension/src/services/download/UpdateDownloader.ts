@@ -26,9 +26,13 @@ export class UpdateDownloader {
       // In a future version, we could implement direct download
       await vscode.env.openExternal(vscode.Uri.parse(downloadUrl));
 
-      this.outputChannel.appendLine(`Download URL opened: ${downloadUrl}`);
+      this.outputChannel.appendLine(
+        `Download URL opened: ${downloadUrl}`,
+      );
     } catch (error) {
-      this.outputChannel.appendLine(`Failed to open download URL: ${error}`);
+      this.outputChannel.appendLine(
+        `Failed to open download URL: ${error}`,
+      );
       throw new Error(`Failed to initiate download: ${error}`);
     }
   }
@@ -41,7 +45,9 @@ export class UpdateDownloader {
       await vscode.env.openExternal(vscode.Uri.parse(releaseUrl));
       this.outputChannel.appendLine(`Opened release page: ${releaseUrl}`);
     } catch (error) {
-      this.outputChannel.appendLine(`Failed to open release page: ${error}`);
+      this.outputChannel.appendLine(
+        `Failed to open release page: ${error}`,
+      );
       throw new Error(`Failed to open release page: ${error}`);
     }
   }

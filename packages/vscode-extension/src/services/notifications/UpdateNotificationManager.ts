@@ -130,7 +130,10 @@ export class UpdateNotificationManager {
     releaseDate: string,
     releaseBody: string,
   ): string {
-    const truncatedNotes = TextFormatter.truncateReleaseNotes(releaseBody, 200);
+    const truncatedNotes = TextFormatter.truncateReleaseNotes(
+      releaseBody,
+      200,
+    );
 
     return `🚀 New version available: v${latestVersion}\n\nCurrent: v${currentVersion}\nReleased: ${releaseDate}\n\n${truncatedNotes}`;
   }
