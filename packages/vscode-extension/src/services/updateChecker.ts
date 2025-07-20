@@ -1,22 +1,10 @@
 import * as vscode from "vscode";
 import * as https from "https";
-
-/**
- * GitHub release information
- */
-interface GitHubRelease {
-  tag_name: string;
-  name: string;
-  body: string;
-  html_url: string;
-  assets: Array<{
-    name: string;
-    browser_download_url: string;
-    size: number;
-  }>;
-  published_at: string;
-  prerelease: boolean;
-}
+import { VersionComparator } from "../utils/VersionComparator";
+import { TextFormatter } from "../utils/TextFormatter";
+import { GitHubApiClient } from "./github/GitHubApiClient";
+import { type GitHubRelease, ReleaseProcessor } from "./github/ReleaseProcessor";
+import { UpdateConfiguration } from "./config/UpdateConfiguration";
 
 /**
  * Update check result
@@ -35,25 +23,23 @@ interface UpdateCheckResult {
 export class UpdateCheckerService {
   private readonly context: vscode.ExtensionContext;
   private readonly outputChannel: vscode.OutputChannel;
-  private readonly GITHUB_REPO = "emmettirl/deno-mcp-server";
-  private readonly GITHUB_API_BASE = "https://api.github.com";
+  private readonly githubApi: GitHubApiClient;
+  private readonly config: UpdateConfiguration;
 
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
     this.outputChannel = vscode.window.createOutputChannel(
       "Deno MCP Updates",
     );
+    this.githubApi = new GitHubApiClient("emmettirl", "deno-mcp-server");
+    this.config = new UpdateConfiguration();
   }
 
   /**
    * Initialize the update checker service
    */
   public async initialize(): Promise<void> {
-    const config = vscode.workspace.getConfiguration("deno-mcp");
-    const autoUpdateEnabled = config.get<boolean>(
-      "autoUpdate.enabled",
-      true,
-    );
+    const autoUpdateEnabled = this.config.isAutoUpdateEnabled();
 
     if (!autoUpdateEnabled) {
       this.outputChannel.appendLine("Auto-update checking is disabled");
@@ -63,10 +49,7 @@ export class UpdateCheckerService {
     this.outputChannel.appendLine("Update checker service initialized");
 
     // Schedule background checks based on configuration
-    const checkInterval = config.get<string>(
-      "autoUpdate.checkInterval",
-      "daily",
-    );
+    const checkInterval = this.config.getCheckInterval();
     if (checkInterval !== "manual") {
       await this.scheduleBackgroundCheck(checkInterval);
     }
@@ -138,11 +121,7 @@ export class UpdateCheckerService {
     const currentVersion = this.getCurrentVersion();
     this.outputChannel.appendLine(`Current version: ${currentVersion}`);
 
-    const config = vscode.workspace.getConfiguration("deno-mcp");
-    const includePreReleases = config.get<boolean>(
-      "autoUpdate.includePreReleases",
-      false,
-    );
+    const includePreReleases = this.config.shouldIncludePreReleases();
 
     const latestRelease = await this.fetchLatestRelease(includePreReleases);
 
@@ -181,11 +160,7 @@ export class UpdateCheckerService {
     }
 
     const release = result.releaseInfo;
-    const config = vscode.workspace.getConfiguration("deno-mcp");
-    const autoDownload = config.get<boolean>(
-      "autoUpdate.autoDownload",
-      false,
-    );
+    const autoDownload = this.config.isAutoDownloadEnabled();
 
     // Create detailed update message
     const releaseDate = new Date(release.published_at).toLocaleDateString();
@@ -253,7 +228,7 @@ export class UpdateCheckerService {
    * Schedule background update checks
    */
   private async scheduleBackgroundCheck(interval: string): Promise<void> {
-    const intervalMs = this.getIntervalMs(interval);
+    const intervalMs = this.config.getIntervalMs(interval);
 
     if (intervalMs > 0) {
       setTimeout(async () => {
@@ -286,16 +261,7 @@ export class UpdateCheckerService {
    * Convert interval string to milliseconds
    */
   private getIntervalMs(interval: string): number {
-    switch (interval) {
-      case "startup":
-        return 0; // Check on startup only
-      case "daily":
-        return 24 * 60 * 60 * 1000; // 24 hours
-      case "weekly":
-        return 7 * 24 * 60 * 60 * 1000; // 7 days
-      default:
-        return 0;
-    }
+    return this.config.getIntervalMs(interval);
   }
 
   /**
@@ -314,7 +280,7 @@ export class UpdateCheckerService {
    * Normalize version string (remove 'v' prefix if present)
    */
   private normalizeVersion(version: string): string {
-    return version.startsWith("v") ? version.substring(1) : version;
+    return VersionComparator.normalizeVersion(version);
   }
 
   /**
@@ -322,126 +288,21 @@ export class UpdateCheckerService {
    * Returns: -1 if v1 < v2, 0 if v1 === v2, 1 if v1 > v2
    */
   private compareVersions(v1: string, v2: string): number {
-    const normalize = (v: string) => v.replace(/^v/, "");
-    const version1 = normalize(v1);
-    const version2 = normalize(v2);
-
-    // Handle invalid versions
-    if (!version1 || !version2) {
-      return 0;
-    }
-
-    // Split version and prerelease parts
-    const [ver1, pre1] = version1.split(/[-+]/);
-    const [ver2, pre2] = version2.split(/[-+]/);
-
-    const parts1 = ver1.split(".").map((n) => parseInt(n, 10) || 0);
-    const parts2 = ver2.split(".").map((n) => parseInt(n, 10) || 0);
-
-    const maxLength = Math.max(parts1.length, parts2.length);
-
-    // Compare version numbers
-    for (let i = 0; i < maxLength; i++) {
-      const part1 = parts1[i] || 0;
-      const part2 = parts2[i] || 0;
-
-      if (part1 < part2) {
-        return -1;
-      }
-      if (part1 > part2) {
-        return 1;
-      }
-    }
-
-    // If versions are equal, compare prerelease identifiers
-    if (pre1 && pre2) {
-      return pre1.localeCompare(pre2);
-    }
-
-    // Prerelease versions are less than release versions
-    if (pre1 && !pre2) {
-      return -1;
-    }
-    if (!pre1 && pre2) {
-      return 1;
-    }
-
-    return 0;
+    return VersionComparator.compareVersions(v1, v2);
   }
 
   /**
    * Get download URL from GitHub release
    */
   private getDownloadUrl(release: GitHubRelease): string | undefined {
-    // Handle malformed data gracefully
-    if (!release || !Array.isArray(release.assets)) {
-      return release?.html_url;
-    }
-
-    // Look for specific assets or use the release page
-    const vsixAsset = release.assets.find((asset) =>
-      asset?.name?.includes(".vsix") || asset?.name?.includes("extension")
-    );
-
-    if (vsixAsset?.browser_download_url) {
-      return vsixAsset.browser_download_url;
-    }
-
-    // Fallback to release page
-    return release.html_url;
+    return ReleaseProcessor.getDownloadUrl(release);
   }
 
   /**
    * Make a request to the GitHub API
    */
   private async makeGitHubApiRequest(path: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const https = require("https");
-      const options = {
-        hostname: "api.github.com",
-        port: 443,
-        path: `/repos/${this.GITHUB_REPO}${path}`,
-        method: "GET",
-        headers: {
-          "User-Agent": "VSCode-Deno-MCP-Extension",
-          "Accept": "application/vnd.github.v3+json",
-        },
-      };
-
-      const req = https.request(options, (res: any) => {
-        let data = "";
-
-        res.on("data", (chunk: any) => {
-          data += chunk;
-        });
-
-        res.on("end", () => {
-          try {
-            const response = JSON.parse(data);
-            resolve(response);
-          } catch (parseError) {
-            reject(
-              new Error(
-                `Failed to parse GitHub API response: ${parseError}`,
-              ),
-            );
-          }
-        });
-      });
-
-      req.on("error", (error: any) => {
-        reject(
-          new Error(`GitHub API request failed: ${error.message}`),
-        );
-      });
-
-      req.setTimeout(10000, () => {
-        req.destroy();
-        reject(new Error("GitHub API request timed out"));
-      });
-
-      req.end();
-    });
+    return this.githubApi.makeGitHubApiRequest(path);
   }
 
   /**
@@ -485,57 +346,27 @@ export class UpdateCheckerService {
    * Extract version from GitHub tag
    */
   private extractVersionFromTag(tag: string): string {
-    return this.normalizeVersion(tag);
+    return ReleaseProcessor.extractVersionFromTag(tag);
   }
 
   /**
    * Parse GitHub release data
    */
   private parseGitHubRelease(release: any): any {
-    if (!release) {
-      return {};
-    }
-
-    return {
-      version: this.extractVersionFromTag(release.tag_name || ""),
-      name: release.name || "",
-      body: release.body || "",
-      downloadUrl: this.getDownloadUrl(release),
-      prerelease: !!release.prerelease,
-    };
+    return ReleaseProcessor.parseGitHubRelease(release);
   }
 
   /**
    * Get GitHub releases URL
    */
   private getGitHubReleasesUrl(includePreReleases: boolean): string {
-    if (includePreReleases) {
-      return `${this.GITHUB_API_BASE}/repos/${this.GITHUB_REPO}/releases`;
-    }
-    return `${this.GITHUB_API_BASE}/repos/${this.GITHUB_REPO}/releases/latest`;
+    return this.githubApi.getGitHubReleasesUrl(includePreReleases);
   }
 
   /**
    * Truncate release notes for display in notification
    */
   private truncateReleaseNotes(body: string, maxLength: number = 200): string {
-    if (!body) {
-      return "No release notes available.";
-    }
-
-    // Clean up markdown first
-    const cleaned = body
-      .replace(/#{1,6}\s/g, "") // Remove markdown headers
-      .replace(/\*\*/g, "") // Remove bold markdown
-      .replace(/\*/g, "") // Remove italic markdown
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Replace links with text
-      .trim();
-
-    // If cleaned text is short enough, return as-is
-    if (cleaned.length <= maxLength) {
-      return cleaned;
-    }
-
-    return cleaned.substring(0, maxLength) + "...";
+    return TextFormatter.truncateReleaseNotes(body, maxLength);
   }
 }
