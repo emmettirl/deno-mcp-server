@@ -1,8 +1,9 @@
-// Core MCP Server implementation
+// Core MCP Server implementation with response validation
 
-import { MCPRequest, MCPResponse, MCPTool, ToolArgs, ToolDefinition } from "./types.ts";
+import { MCPRequest, MCPTool, ToolArgs, ToolDefinition } from "./types.ts";
 import { validateToolArgs } from "./validation.ts";
-import { loadConfig as _loadConfig } from "./config.ts";
+import { errorContext, ErrorFactory } from "./errors/index.ts";
+import { MCPResponse, ResponseBuilder } from "./response-validation.ts";
 
 export class DenoMCPServer {
   private tools: Map<string, MCPTool> = new Map();
@@ -30,32 +31,18 @@ export class DenoMCPServer {
     try {
       switch (request.method) {
         case "initialize": {
-          return {
-            jsonrpc: "2.0",
-            id: request.id,
-            result: {
-              protocolVersion: "2024-11-05",
-              capabilities: {
-                tools: {
-                  listChanged: true,
-                },
-              },
-              serverInfo: {
-                name: "deno-tools-mcp",
-                version: "1.0.0",
-              },
-            },
-          };
+          return ResponseBuilder.initialize(
+            request.id,
+            "deno-tools-mcp",
+            "1.0.0",
+          );
         }
 
         case "tools/list": {
-          return {
-            jsonrpc: "2.0",
-            id: request.id,
-            result: {
-              tools: Array.from(this.tools.values()),
-            },
-          };
+          return ResponseBuilder.toolsList(
+            request.id,
+            Array.from(this.tools.values()),
+          );
         }
 
         case "tools/call": {
@@ -63,14 +50,11 @@ export class DenoMCPServer {
           const handler = this.handlers.get(toolName);
 
           if (!handler) {
-            return {
-              jsonrpc: "2.0",
-              id: request.id,
-              error: {
-                code: -32601,
-                message: `Tool ${toolName} not found`,
-              },
-            };
+            return ResponseBuilder.error(
+              request.id,
+              -32601,
+              `Tool ${toolName} not found`,
+            );
           }
 
           const args = (request.params?.arguments || {}) as ToolArgs;
@@ -78,44 +62,72 @@ export class DenoMCPServer {
           // Validate tool arguments for security
           const validation = validateToolArgs(args);
           if (!validation.valid) {
-            return {
-              jsonrpc: "2.0",
-              id: request.id,
-              error: {
-                code: -32602,
-                message: `Invalid arguments: ${validation.errors.join(", ")}`,
-              },
-            };
+            const validationError = ErrorFactory.validation(
+              `Tool argument validation failed: ${validation.errors.join(", ")}`,
+              errorContext()
+                .operation("validateToolArgs")
+                .component("DenoMCPServer")
+                .metadata({ toolName, validationErrors: validation.errors })
+                .build(),
+            );
+
+            const jsonRpcError = validationError.toJSONRPCError();
+            return ResponseBuilder.error(
+              request.id,
+              jsonRpcError.code,
+              jsonRpcError.message,
+              jsonRpcError.data,
+            );
           }
 
           const result = await handler(args);
-          return {
-            jsonrpc: "2.0",
-            id: request.id,
-            result,
-          };
+
+          // Transform result into MCP tool call format
+          const content = [{
+            type: "text" as const,
+            text: typeof result === "string" ? result : JSON.stringify(result, null, 2),
+          }];
+
+          return ResponseBuilder.toolCall(request.id, content);
         }
 
         default: {
-          return {
-            jsonrpc: "2.0",
-            id: request.id,
-            error: {
-              code: -32601,
-              message: `Method ${request.method} not found`,
-            },
-          };
+          return ResponseBuilder.error(
+            request.id,
+            -32601,
+            `Method ${request.method} not found`,
+          );
         }
       }
     } catch (error) {
-      return {
-        jsonrpc: "2.0",
-        id: request.id,
-        error: {
-          code: -32603,
-          message: `Internal error: ${error instanceof Error ? error.message : String(error)}`,
-        },
-      };
+      // Use structured error handling
+      const structuredError = error instanceof Error
+        ? ErrorFactory.execution(
+          "MCP request processing failed",
+          errorContext()
+            .operation("handleRequest")
+            .component("DenoMCPServer")
+            .metadata({ method: request.method, requestId: request.id })
+            .build(),
+          { recoveryStrategy: undefined },
+          error,
+        )
+        : ErrorFactory.system(
+          "Unknown error during request processing",
+          errorContext()
+            .operation("handleRequest")
+            .component("DenoMCPServer")
+            .metadata({ method: request.method, requestId: request.id, rawError: String(error) })
+            .build(),
+        );
+
+      const jsonRpcError = structuredError.toJSONRPCError();
+      return ResponseBuilder.error(
+        request.id,
+        jsonRpcError.code,
+        jsonRpcError.message,
+        jsonRpcError.data,
+      );
     }
   }
 
@@ -132,8 +144,30 @@ export class DenoMCPServer {
 
         console.log(JSON.stringify(response));
       } catch (error) {
+        // Use structured error handling for request processing
+        const processingError = error instanceof Error
+          ? ErrorFactory.system(
+            "Request processing error",
+            errorContext()
+              .operation("processRequest")
+              .component("DenoMCPServer")
+              .debugInfo({ text, error: error.message })
+              .build(),
+            undefined,
+            error,
+          )
+          : ErrorFactory.system(
+            "Unknown request processing error",
+            errorContext()
+              .operation("processRequest")
+              .component("DenoMCPServer")
+              .metadata({ text, rawError: String(error) })
+              .build(),
+          );
+
+        console.error(`Error processing request: ${processingError.getUserSafeMessage()}`);
         console.error(
-          `Error processing request: ${error instanceof Error ? error.message : String(error)}`,
+          `Error details: ${JSON.stringify(processingError.getDetailedInfo(), null, 2)}`,
         );
       }
     }
