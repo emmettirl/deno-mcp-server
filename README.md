@@ -205,6 +205,7 @@ Comprehensive documentation is organized in the [`docs/`](docs/) directory:
 - **[API Documentation](docs/development/api.md)** - Complete API reference
 - **[Security Guidelines](docs/development/security.md)** - Security implementation details
 - **[Build Instructions](docs/development/build.md)** - Development setup and build process
+- **[Copilot Configuration](docs/development/COPILOT_SETUP.md)** - GitHub Copilot remote work setup
 
 ### 🐛 **Fixes & Troubleshooting**
 
@@ -213,8 +214,8 @@ Comprehensive documentation is organized in the [`docs/`](docs/) directory:
 
 ### 🔄 **Development Workflows**
 
-- **[Tool Enhancements](docs/workflows/tool-enhancements.md)** - Recent improvements summary
-- **[Publisher Update](docs/workflows/publisher-update.md)** - Extension identifier changes
+- **[Tool Enhancements](docs/development/tool-enhancements.md)** - Recent improvements summary
+- **[Publisher Update](docs/development/publisher-update.md)** - Extension identifier changes
 
 ### 📦 **Package-Specific Documentation**
 

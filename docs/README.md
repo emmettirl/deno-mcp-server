@@ -11,6 +11,10 @@ Technical documentation for developers working on the project:
 - **api.md** - API documentation and technical specifications
 - **security.md** - Security implementation details and guidelines
 - **build.md** - Build process and development setup
+- **COPILOT_SETUP.md** - GitHub Copilot remote work configuration guide
+- **copilot-setup-summary.md** - Overview of Copilot configuration
+- **publisher-update.md** - Extension publisher identifier update documentation
+- **tool-enhancements.md** - MCP server tools enhancement summary
 
 ### 📁 `guides/`
 
@@ -30,8 +34,6 @@ Documentation of bug fixes and resolutions:
 
 Development workflow documentation and change reports:
 
-- **TOOL_ENHANCEMENTS.md** - MCP server tools enhancement summary
-- **PUBLISHER_UPDATE.md** - Extension publisher identifier update
 - **cleanup-plan.md** - Project cleanup and organization plan
 - **issue-4-cleanup.md** - Issue #4 cleanup workflow
 - **issue-5-large-file-refactoring.md** - Large file refactoring workflow
@@ -49,11 +51,15 @@ Development workflow documentation and change reports:
 
 - [API Documentation](development/api.md)
 - [Security Guidelines](development/security.md)
+- [Build Documentation](development/build.md)
+- [Copilot Setup Guide](development/COPILOT_SETUP.md)
+- [Development Tools](development/tool-enhancements.md)
+- [Security Guidelines](development/security.md)
 - [Build Instructions](development/build.md)
 
 ### For Contributors
 
-- [MCP Tools Enhancement Summary](workflows/TOOL_ENHANCEMENTS.md)
+- [MCP Tools Enhancement Summary](development/tool-enhancements.md)
 - [Documentation Organization](workflows/documentation-reorganization.md)
 - [Development Workflows](workflows/)
 
