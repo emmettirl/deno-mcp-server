@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "path";
+import * as fs from "fs";
 import { ChildProcess, spawn } from "child_process";
 import { IMCPServerManager, ServerCommand } from "../types";
 import {
@@ -64,7 +65,6 @@ export class MCPServerManager implements IMCPServerManager {
     );
 
     try {
-      const fs = require("fs");
       if (fs.existsSync(serverMainPath)) {
         this.outputChannel.appendLine(
           `Using packaged MCP server (main.ts): ${serverMainPath}`,

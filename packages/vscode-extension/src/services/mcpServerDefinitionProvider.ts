@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as fs from "fs";
 import { PortManager } from "../utils/portManager";
 import { getDenoExecutablePath, getWorkspaceRootPath } from "../config/pathResolver";
 
@@ -104,7 +105,6 @@ export class DenoMcpServerDefinitionProvider
 
       // Verify the server path exists
       const serverPath = this.getServerPath();
-      const fs = require("fs");
       if (!fs.existsSync(serverPath)) {
         this.outputChannel.appendLine(
           `Server path not found: ${serverPath}`,
@@ -183,7 +183,6 @@ export class DenoMcpServerDefinitionProvider
     }
 
     // Look for the server in the monorepo structure
-    const fs = require("fs");
 
     // Try different possible server locations
     const possiblePaths = [
@@ -223,7 +222,6 @@ export class DenoMcpServerDefinitionProvider
         "package.json",
       ).fsPath;
 
-      const fs = require("fs");
       if (fs.existsSync(packagePath)) {
         const packageJson = JSON.parse(
           fs.readFileSync(packagePath, "utf8"),
