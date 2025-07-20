@@ -1,38 +1,48 @@
 import * as vscode from "vscode";
-import * as https from "https";
-import { VersionComparator } from "../utils/VersionComparator";
-import { TextFormatter } from "../utils/TextFormatter";
 import { GitHubApiClient } from "./github/GitHubApiClient";
-import { type GitHubRelease, ReleaseProcessor } from "./github/ReleaseProcessor";
 import { UpdateConfiguration } from "./config/UpdateConfiguration";
-
-/**
- * Update check result
- */
-interface UpdateCheckResult {
-  hasUpdate: boolean;
-  currentVersion: string;
-  latestVersion?: string;
-  releaseInfo?: GitHubRelease;
-  downloadUrl?: string;
-}
+import {
+  type UpdateCheckResult,
+  UpdateNotificationManager,
+} from "./notifications/UpdateNotificationManager";
+import { UpdateDownloader } from "./download/UpdateDownloader";
+import { UpdateScheduler } from "./scheduler/UpdateScheduler";
+import { UpdateCheckOrchestrator } from "./orchestrator/UpdateCheckOrchestrator";
 
 /**
  * Service for checking and managing updates from GitHub releases
+ * Refactored to use modular architecture with clear separation of concerns
  */
 export class UpdateCheckerService {
   private readonly context: vscode.ExtensionContext;
   private readonly outputChannel: vscode.OutputChannel;
+
+  // Modular components
   private readonly githubApi: GitHubApiClient;
   private readonly config: UpdateConfiguration;
+  private readonly notificationManager: UpdateNotificationManager;
+  private readonly downloader: UpdateDownloader;
+  private readonly scheduler: UpdateScheduler;
+  private readonly orchestrator: UpdateCheckOrchestrator;
 
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
-    this.outputChannel = vscode.window.createOutputChannel(
-      "Deno MCP Updates",
-    );
+    this.outputChannel = vscode.window.createOutputChannel("Deno MCP Updates");
+
+    // Initialize modular components
     this.githubApi = new GitHubApiClient("emmettirl", "deno-mcp-server");
     this.config = new UpdateConfiguration();
+    this.notificationManager = new UpdateNotificationManager(
+      this.outputChannel,
+    );
+    this.downloader = new UpdateDownloader(this.outputChannel);
+    this.scheduler = new UpdateScheduler(this.outputChannel, this.config);
+    this.orchestrator = new UpdateCheckOrchestrator(
+      this.context,
+      this.outputChannel,
+      this.githubApi,
+      this.config,
+    );
   }
 
   /**
@@ -48,10 +58,12 @@ export class UpdateCheckerService {
 
     this.outputChannel.appendLine("Update checker service initialized");
 
-    // Schedule background checks based on configuration
+    // Schedule background checks if enabled
     const checkInterval = this.config.getCheckInterval();
     if (checkInterval !== "manual") {
-      await this.scheduleBackgroundCheck(checkInterval);
+      await this.scheduler.scheduleBackgroundChecks(() =>
+        this.performBackgroundUpdateCheck()
+      );
     }
   }
 
@@ -74,7 +86,8 @@ export class UpdateCheckerService {
             increment: 20,
             message: "Fetching current version...",
           });
-          const result = await this.performUpdateCheck();
+
+          const result = await this.orchestrator.performUpdateCheck();
 
           progressReporter.report({
             increment: 80,
@@ -92,61 +105,38 @@ export class UpdateCheckerService {
               increment: 100,
               message: "Up to date!",
             });
-            vscode.window.showInformationMessage(
-              `Deno MCP Server is up to date (v${result.currentVersion})`,
-            );
-            this.outputChannel.appendLine(
-              `No updates found. Current version: v${result.currentVersion}`,
+            this.notificationManager.showNoUpdateAvailable(
+              result.currentVersion,
             );
           }
         } catch (error) {
-          this.outputChannel.appendLine(
-            `Error checking for updates: ${error}`,
-          );
-          console.error("Update check failed:", error);
-          vscode.window.showErrorMessage(
-            `Failed to check for updates: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
-          );
+          this.notificationManager.showUpdateCheckError(error);
         }
       },
     );
   }
 
   /**
-   * Perform the actual update check against GitHub releases
+   * Perform background update check (non-intrusive)
    */
-  private async performUpdateCheck(): Promise<UpdateCheckResult> {
-    const currentVersion = this.getCurrentVersion();
-    this.outputChannel.appendLine(`Current version: ${currentVersion}`);
+  private async performBackgroundUpdateCheck(): Promise<void> {
+    try {
+      const result = await this.orchestrator.performUpdateCheck();
 
-    const includePreReleases = this.config.shouldIncludePreReleases();
+      if (result.hasUpdate && result.latestVersion) {
+        const action = await this.notificationManager
+          .showBackgroundUpdateNotification(
+            result.latestVersion,
+          );
 
-    const latestRelease = await this.fetchLatestRelease(includePreReleases);
-
-    if (!latestRelease) {
-      return {
-        hasUpdate: false,
-        currentVersion,
-      };
+        if (action === "update_now" && result.releaseInfo) {
+          await this.handleUpdateAvailable(result);
+        }
+      }
+    } catch (error) {
+      // Silent fail for background checks, but log the error
+      this.outputChannel.appendLine(`Background update check failed: ${error}`);
     }
-
-    const latestVersion = this.normalizeVersion(latestRelease.tag_name);
-    const hasUpdate = this.compareVersions(currentVersion, latestVersion) < 0;
-
-    this.outputChannel.appendLine(
-      `Latest available version: ${latestVersion}`,
-    );
-    this.outputChannel.appendLine(`Update available: ${hasUpdate}`);
-
-    return {
-      hasUpdate,
-      currentVersion,
-      latestVersion,
-      releaseInfo: latestRelease,
-      downloadUrl: this.getDownloadUrl(latestRelease),
-    };
   }
 
   /**
@@ -159,179 +149,30 @@ export class UpdateCheckerService {
       return;
     }
 
-    const release = result.releaseInfo;
     const autoDownload = this.config.isAutoDownloadEnabled();
-
-    // Create detailed update message
-    const releaseDate = new Date(release.published_at).toLocaleDateString();
-    const message =
-      `🚀 New version available: v${result.latestVersion}\n\nCurrent: v${result.currentVersion}\nReleased: ${releaseDate}\n\n${
-        this.truncateReleaseNotes(release.body, 200)
-      }`;
-
-    // Show detailed update dialog
-    const choice = await vscode.window.showInformationMessage(
-      `Deno MCP Server v${result.latestVersion} is available`,
-      {
-        modal: true,
-        detail: message,
-      },
-      autoDownload ? "Download Now" : "View Release",
-      "View Release Notes",
-      "Later",
+    const choice = await this.notificationManager.showUpdateAvailableDialog(
+      result,
+      autoDownload,
     );
 
     switch (choice) {
-      case "Download Now":
+      case "download":
         if (result.downloadUrl) {
-          await this.initiateDownload(
+          await this.downloader.initiateDownload(
             result.downloadUrl,
             result.latestVersion!,
           );
+          this.notificationManager.showDownloadStarted(result.latestVersion!);
         } else {
-          await vscode.env.openExternal(
-            vscode.Uri.parse(release.html_url),
-          );
+          await this.downloader.openReleasePage(result.releaseInfo.html_url);
         }
         break;
-      case "View Release":
-      case "View Release Notes":
-        await vscode.env.openExternal(
-          vscode.Uri.parse(release.html_url),
-        );
+      case "view_release":
+        await this.downloader.openReleasePage(result.releaseInfo.html_url);
         break;
-      case "Later":
-        this.outputChannel.appendLine("Update postponed by user");
+      case "later":
+        // Already logged by notification manager
         break;
-    }
-  }
-
-  /**
-   * Initiate download of update
-   */
-  private async initiateDownload(
-    downloadUrl: string,
-    version: string,
-  ): Promise<void> {
-    this.outputChannel.appendLine(`Starting download of v${version}...`);
-
-    // Open the download URL in the browser for now
-    // In a future version, we could implement direct download
-    await vscode.env.openExternal(vscode.Uri.parse(downloadUrl));
-
-    vscode.window.showInformationMessage(
-      `Download started for Deno MCP Server v${version}. Check your browser.`,
-    );
-  }
-
-  /**
-   * Schedule background update checks
-   */
-  private async scheduleBackgroundCheck(interval: string): Promise<void> {
-    const intervalMs = this.config.getIntervalMs(interval);
-
-    if (intervalMs > 0) {
-      setTimeout(async () => {
-        try {
-          const result = await this.performUpdateCheck();
-          if (result.hasUpdate) {
-            // Show non-intrusive notification for background checks
-            const action = await vscode.window
-              .showInformationMessage(
-                `Deno MCP Server v${result.latestVersion} is available`,
-                "Update Now",
-                "Later",
-              );
-
-            if (action === "Update Now" && result.releaseInfo) {
-              await this.handleUpdateAvailable(result);
-            }
-          }
-        } catch (error) {
-          // Silent fail for background checks
-          this.outputChannel.appendLine(
-            `Background update check failed: ${error}`,
-          );
-        }
-      }, intervalMs);
-    }
-  }
-
-  /**
-   * Convert interval string to milliseconds
-   */
-  private getIntervalMs(interval: string): number {
-    return this.config.getIntervalMs(interval);
-  }
-
-  /**
-   * Get the current version of the extension
-   */
-  private getCurrentVersion(): string {
-    try {
-      const extensionPackage = this.context.extension?.packageJSON;
-      return extensionPackage?.version || "0.0.1";
-    } catch {
-      return "0.0.1";
-    }
-  }
-
-  /**
-   * Normalize version string (remove 'v' prefix if present)
-   */
-  private normalizeVersion(version: string): string {
-    return VersionComparator.normalizeVersion(version);
-  }
-
-  /**
-   * Compare two semantic versions
-   * Returns: -1 if v1 < v2, 0 if v1 === v2, 1 if v1 > v2
-   */
-  private compareVersions(v1: string, v2: string): number {
-    return VersionComparator.compareVersions(v1, v2);
-  }
-
-  /**
-   * Get download URL from GitHub release
-   */
-  private getDownloadUrl(release: GitHubRelease): string | undefined {
-    return ReleaseProcessor.getDownloadUrl(release);
-  }
-
-  /**
-   * Make a request to the GitHub API
-   */
-  private async makeGitHubApiRequest(path: string): Promise<any> {
-    return this.githubApi.makeGitHubApiRequest(path);
-  }
-
-  /**
-   * Fetch the latest release from GitHub
-   */
-  private async fetchLatestRelease(
-    includePreReleases: boolean,
-  ): Promise<GitHubRelease | null> {
-    try {
-      const releases = await this.makeGitHubApiRequest("/releases");
-
-      if (!releases || releases.length === 0) {
-        return null;
-      }
-
-      // Filter releases based on prerelease preference
-      const filteredReleases = includePreReleases
-        ? releases
-        : releases.filter((release: GitHubRelease) => !release.prerelease);
-
-      if (filteredReleases.length === 0) {
-        return null;
-      }
-
-      // Return the latest release
-      return filteredReleases[0];
-    } catch (error) {
-      this.outputChannel.appendLine(`Failed to fetch releases: ${error}`);
-      throw error;
     }
   }
 
@@ -339,37 +180,45 @@ export class UpdateCheckerService {
    * Dispose of resources
    */
   public dispose(): void {
+    this.scheduler.dispose();
     this.outputChannel.dispose();
   }
 
+  // Legacy methods for backward compatibility with existing tests
+  // These delegate to the orchestrator and other modules
+
   /**
-   * Extract version from GitHub tag
+   * @deprecated Use orchestrator.performUpdateCheck() directly in new code
    */
-  private extractVersionFromTag(tag: string): string {
-    return ReleaseProcessor.extractVersionFromTag(tag);
+  private async performUpdateCheck(): Promise<UpdateCheckResult> {
+    return this.orchestrator.performUpdateCheck();
   }
 
   /**
-   * Parse GitHub release data
+   * @deprecated For testing compatibility only - use VersionComparator.compareVersions directly
    */
-  private parseGitHubRelease(release: any): any {
-    return ReleaseProcessor.parseGitHubRelease(release);
+  private compareVersions(current: string, latest: string): number {
+    const { VersionComparator } = require("../utils/VersionComparator");
+    return VersionComparator.compareVersions(current, latest);
   }
 
   /**
-   * Get GitHub releases URL
+   * @deprecated For testing compatibility only
    */
-  private getGitHubReleasesUrl(includePreReleases: boolean): string {
-    return this.githubApi.getGitHubReleasesUrl(includePreReleases);
-  }
+  private async fetchLatestRelease(includePreReleases: boolean) {
+    // This method is used by tests - keep for compatibility
+    const releases = await this.githubApi.makeGitHubApiRequest("/releases");
+    if (!releases || releases.length === 0) {
+      return null;
+    }
 
-  /**
-   * Truncate release notes for display in notification
-   */
-  private truncateReleaseNotes(
-    body: string,
-    maxLength: number = 200,
-  ): string {
-    return TextFormatter.truncateReleaseNotes(body, maxLength);
+    const filteredReleases = includePreReleases
+      ? releases
+      : releases.filter((release: any) => !release.prerelease);
+
+    return filteredReleases.length > 0 ? filteredReleases[0] : null;
   }
 }
+
+// Re-export the UpdateCheckResult type for backward compatibility
+export type { UpdateCheckResult };
