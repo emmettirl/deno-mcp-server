@@ -12,6 +12,8 @@ export const COMMANDS = {
   STOP_SERVER: "deno-mcp.stopServer",
   SHOW_STATUS: "deno-mcp.showStatus",
   CONFIGURE_MCP: "deno-mcp.configureMCP",
+  CHECK_UPDATES: "deno-mcp.checkUpdates",
+  VIEW_RELEASES: "deno-mcp.viewReleases",
 } as const;
 
 /**
@@ -24,6 +26,10 @@ export const CONFIG_KEYS = {
   ENABLE_AUTO_FORMAT: "deno-mcp.enableAutoFormat",
   ENABLE_AUTO_LINT: "deno-mcp.enableAutoLint",
   USE_HTTP_TRANSPORT: "deno-mcp.useHttpTransport",
+  AUTO_UPDATE_ENABLED: "deno-mcp.autoUpdate.enabled",
+  AUTO_UPDATE_CHECK_INTERVAL: "deno-mcp.autoUpdate.checkInterval",
+  AUTO_UPDATE_INCLUDE_PRERELEASES: "deno-mcp.autoUpdate.includePreReleases",
+  AUTO_UPDATE_AUTO_DOWNLOAD: "deno-mcp.autoUpdate.autoDownload",
 } as const;
 
 /**

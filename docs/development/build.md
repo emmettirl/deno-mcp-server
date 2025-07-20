@@ -1,6 +1,17 @@
-# Build System
+# Build ```bash
 
-This monorepo includes comprehensive build scripts for both the Deno MCP Server
+# Build everything
+
+deno run --allow-all scripts/build.ts all
+
+# Verbose mode
+
+deno run --allow-all scripts/build.ts all --verbose
+
+# Individual commands
+
+deno run --allow-all scripts/build.ts fmt # Format code
+deno run --allow-all scripts/build.ts lint # Lint codeonorepo includes comprehensive build scripts for both the Deno MCP Server
 and VS Code Extension.
 
 ## Quick Start

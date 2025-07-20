@@ -45,10 +45,12 @@ git clone https://github.com/emmettirl/deno-mcp-server.git
 cd deno-mcp-server
 
 # Build everything
-.\build.ps1 all
+deno run --allow-all scripts/build.ts all
+# OR on Windows:
+.\scripts\build.ps1 all
 
 # Run tests
-.\build.ps1 test
+deno run --allow-all scripts/build.ts test
 
 # Start development
 cd packages/server && deno run --allow-all cli.ts
@@ -58,25 +60,32 @@ cd packages/server && deno run --allow-all cli.ts
 
 Unified PowerShell build script with comprehensive commands:
 
-```powershell
-.\build.ps1 <command> [options]
+````powershell
+**Usage:**
+```bash
+# Cross-platform (recommended)
+deno run --allow-all scripts/build.ts <command> [options]
+
+# Windows PowerShell
+.\scripts\build.ps1 <command> [options]
+````
 
 Commands:
-  fmt          Format code in both packages  
-  lint         Run linting on both packages
-  check        Type check both packages
-  test         Run all tests (70+ tests total)
-  build        Build both packages 
-  package      Package both for distribution
-  all          Run fmt, lint, check, test, build, package
-  clean        Clean build artifacts
+fmt Format code in both packages\
+lint Run linting on both packages
+check Type check both packages
+test Run all tests (70+ tests total)
+build Build both packages
+package Package both for distribution
+all Run fmt, lint, check, test, build, package
+clean Clean build artifacts
 
 Options:
-  -ServerOnly  Only operate on server package
-  -ExtOnly     Only operate on extension package  
-  -ShowVerbose Show detailed output
-```
+-ServerOnly Only operate on server package
+-ExtOnly Only operate on extension package\
+-ShowVerbose Show detailed output
 
+````
 ## 🤖 Automated Releases
 
 ### Release Triggers
@@ -87,7 +96,7 @@ Options:
 git tag v1.2.3
 git push origin v1.2.3
 # → Triggers full release pipeline
-```
+````
 
 **Manual (GitHub Actions):**
 
@@ -147,13 +156,11 @@ Comprehensive test coverage across both packages:
 
 ```bash
 # Run all tests
-.\build.ps1 test
+deno run --allow-all scripts/build.ts test
 
-# Test individual packages
-.\build.ps1 test -ServerOnly
-.\build.ps1 test -ExtOnly
-
-# Coverage reports
+# Test individual packages  
+.\scripts\build.ps1 test -ServerOnly
+.\scripts\build.ps1 test -ExtOnly# Coverage reports
 cd packages/server && deno test --coverage --allow-all
 cd packages/vscode-extension && npm run test:coverage
 ```
@@ -218,7 +225,7 @@ Comprehensive documentation is organized in the [`docs/`](docs/) directory:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make changes and run tests (`.\build.ps1 test`)
+3. Make changes and run tests (`deno run --allow-all scripts/build.ts test`)
 4. Commit changes (`git commit -m 'feat: add amazing feature'`)
 5. Push to branch (`git push origin feature/amazing-feature`)
 6. Open a Pull Request

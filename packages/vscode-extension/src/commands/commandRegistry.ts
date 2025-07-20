@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { CommandHandler, ExtensionManagers } from "../types";
 import { COMMANDS } from "../config/constants";
-import { MCPConfigurationManager } from "../mcpConfig";
 
 /**
  * Command registry for VS Code command registration and handlers
@@ -28,6 +27,8 @@ export class CommandRegistry {
       [COMMANDS.STOP_SERVER, this.handleStopServerCommand.bind(this)],
       [COMMANDS.SHOW_STATUS, this.handleShowStatusCommand.bind(this)],
       [COMMANDS.CONFIGURE_MCP, this.handleConfigureMCPCommand.bind(this)],
+      [COMMANDS.CHECK_UPDATES, this.handleCheckUpdatesCommand.bind(this)],
+      [COMMANDS.VIEW_RELEASES, this.handleViewReleasesCommand.bind(this)],
     ];
 
     const disposables = commands.map(([commandId, handler]) =>
@@ -123,8 +124,8 @@ export class CommandRegistry {
   private async handleConfigureMCPCommand(): Promise<void> {
     const choice = await vscode.window.showQuickPick(
       [
-        { label: "Setup/Update Configuration", value: "setup" },
-        { label: "Force Update Configuration", value: "force" },
+        { label: "Refresh MCP Server Definitions", value: "refresh" },
+        { label: "View MCP Server Status", value: "status" },
       ],
       {
         placeHolder: "Choose MCP configuration action",
@@ -135,12 +136,34 @@ export class CommandRegistry {
       return;
     }
 
-    const mcpConfigManager = new MCPConfigurationManager(this.context);
+    if (choice.value === "refresh") {
+      this.managers.mcpServerDefinitionProvider.refreshServers();
+      vscode.window.showInformationMessage("MCP server definitions refreshed");
+    } else if (choice.value === "status") {
+      this.managers.outputChannel.show();
+    }
+  }
 
-    if (choice.value === "force") {
-      await mcpConfigManager.forceUpdateMCPConfiguration();
-    } else {
-      await mcpConfigManager.setupMCPConfiguration();
+  private async handleCheckUpdatesCommand(): Promise<void> {
+    try {
+      await this.managers.updateCheckerService.checkForUpdates();
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      vscode.window.showErrorMessage(
+        `Failed to check for updates: ${errorMsg}`,
+      );
+    }
+  }
+
+  private async handleViewReleasesCommand(): Promise<void> {
+    try {
+      const releaseUrl = `https://github.com/emmettirl/deno-mcp-server/releases`;
+      await vscode.env.openExternal(vscode.Uri.parse(releaseUrl));
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      vscode.window.showErrorMessage(
+        `Failed to open releases page: ${errorMsg}`,
+      );
     }
   }
 }

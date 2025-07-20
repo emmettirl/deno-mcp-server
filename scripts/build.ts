@@ -33,7 +33,7 @@ import {
   runAll,
   runTests,
   typeCheck,
-} from "./src/builders/index.ts";
+} from "../src/builders/index.ts";
 
 /**
  * Show help information

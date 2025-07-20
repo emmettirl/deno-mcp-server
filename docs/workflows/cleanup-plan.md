@@ -43,7 +43,7 @@ We have multiple build systems that may be duplicates:
 
 - ✅ `test-mcp-path.js` (1.5KB) - Test file, determine if still needed
 - ✅ `docker-compose.yml` (1 byte) - Nearly empty, likely broken
-- ✅ `ci-optimized.yml` (8.3KB) - GitHub Actions workflow
+- ✅ `.github/workflows/ci.yml` (8.3KB) - GitHub Actions workflow
 - ✅ `LINE_ENDING_FIX.md` (4.6KB) - Documentation
 - ✅ `BUILD.md` (5.1KB) - Build documentation
 

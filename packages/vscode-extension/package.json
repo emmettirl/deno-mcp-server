@@ -80,6 +80,16 @@
         "command": "deno-mcp.configureMCP",
         "title": "Configure MCP Integration",
         "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.checkUpdates",
+        "title": "Check for Updates",
+        "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.viewReleases",
+        "title": "View Release History",
+        "category": "Deno MCP"
       }
     ],
     "configuration": {
@@ -113,6 +123,32 @@
           "type": "boolean",
           "default": false,
           "description": "Use HTTP transport for MCP server (default: stdio)"
+        },
+        "deno-mcp.autoUpdate.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic update checking"
+        },
+        "deno-mcp.autoUpdate.checkInterval": {
+          "type": "string",
+          "enum": [
+            "startup",
+            "daily",
+            "weekly",
+            "manual"
+          ],
+          "default": "daily",
+          "description": "How often to check for updates"
+        },
+        "deno-mcp.autoUpdate.includePreReleases": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include pre-release versions in update checks"
+        },
+        "deno-mcp.autoUpdate.autoDownload": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically download updates (vs prompt only)"
         }
       }
     },
@@ -135,6 +171,12 @@
         "mac": "cmd+shift+t",
         "when": "editorTextFocus"
       }
+    ],
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "deno-mcp-server.definitions",
+        "label": "Deno MCP Server"
+      }
     ]
   },
   "scripts": {
@@ -153,16 +195,18 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.102.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/sinon": "^17.0.4",
+    "@types/vscode": "^1.102.0",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
-    "eslint": "^9.25.1",
-    "esbuild": "^0.25.3",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.8.3",
     "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.25.3",
+    "eslint": "^9.25.1",
+    "npm-run-all": "^4.1.5",
+    "sinon": "^21.0.0",
+    "typescript": "^5.8.3"
   }
 }
