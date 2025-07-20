@@ -23,19 +23,7 @@ suite("Update Checker Service Tests", () => {
   });
 
   test("Should initialize without errors", async () => {
-    // Mock configuration to disable auto-update for test
-    const mockConfig = {
-      get: (key: string, defaultValue?: any) => {
-        if (key === "autoUpdate.enabled") {
-          return false;
-        }
-        return defaultValue;
-      },
-    };
-
-    const configStub = vscode.workspace.getConfiguration as any;
-    configStub.returns(mockConfig);
-
+    // Simple test that initialization doesn't throw
     await assert.doesNotReject(async () => {
       await updateChecker.initialize();
     });
