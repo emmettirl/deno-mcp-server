@@ -104,3 +104,22 @@ export function findMCPServerPath(
   outputChannel.appendLine("Falling back to mock server");
   return path.join(context.extensionPath, "mock-mcp-server.ts");
 }
+
+/**
+ * Get the Deno executable path
+ */
+export function getDenoExecutablePath(): string {
+  const config = vscode.workspace.getConfiguration("deno-mcp");
+  return config.get<string>("denoPath", "deno");
+}
+
+/**
+ * Get the current workspace root path
+ */
+export function getWorkspaceRootPath(): string | undefined {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    return undefined;
+  }
+  return workspaceFolders[0].uri.fsPath;
+}

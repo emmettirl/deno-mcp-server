@@ -4,11 +4,14 @@ import * as vscode from "vscode";
 import { MCPServerManager } from "./managers/mcpServerManager";
 import { DenoCommandRunner } from "./commands/denoCommandRunner";
 import { CommandRegistry } from "./commands/commandRegistry";
-import { MCPConfigurationManager } from "./mcpConfig";
+import { DenoMcpServerDefinitionProvider } from "./services/mcpServerDefinitionProvider";
+import { UpdateCheckerService } from "./services/updateChecker";
 import { ExtensionManagers } from "./types";
 
 let mcpServerManager: MCPServerManager;
 let denoCommandRunner: DenoCommandRunner;
+let mcpServerDefinitionProvider: DenoMcpServerDefinitionProvider;
+let updateCheckerService: UpdateCheckerService;
 
 // This method is called when your extension is activated
 export function activate(context: vscode.ExtensionContext) {
@@ -21,17 +24,29 @@ export function activate(context: vscode.ExtensionContext) {
   mcpServerManager = new MCPServerManager(context);
   denoCommandRunner = new DenoCommandRunner(outputChannel);
 
-  // Initialize MCP configuration manager and setup if needed
-  const mcpConfigManager = new MCPConfigurationManager(context);
-  // Smart setup: only adds deno-mcp-server if not already configured
-  mcpConfigManager.setupMCPConfiguration();
+  // Initialize MCP Server Definition Provider (replaces direct config file manipulation)
+  mcpServerDefinitionProvider = new DenoMcpServerDefinitionProvider(context);
+  context.subscriptions.push(mcpServerDefinitionProvider);
+
+  // Register the MCP Server Definition Provider with VS Code
+  const mcpProviderDisposable = vscode.lm.registerMcpServerDefinitionProvider(
+    "deno-mcp-server.definitions",
+    mcpServerDefinitionProvider,
+  );
+  context.subscriptions.push(mcpProviderDisposable);
+
+  // Initialize update checker service
+  updateCheckerService = new UpdateCheckerService(context);
+  context.subscriptions.push(updateCheckerService);
+  updateCheckerService.initialize();
 
   // Create managers object for command registry
   const managers: ExtensionManagers = {
     serverManager: mcpServerManager,
     commandRunner: denoCommandRunner,
-    configManager: mcpConfigManager,
     outputChannel: outputChannel,
+    mcpServerDefinitionProvider: mcpServerDefinitionProvider,
+    updateCheckerService: updateCheckerService,
   };
 
   // Register all commands using the sophisticated command registry
@@ -62,4 +77,6 @@ export function activate(context: vscode.ExtensionContext) {
 // This method is called when your extension is deactivated
 export function deactivate() {
   mcpServerManager?.stopServer();
+  mcpServerDefinitionProvider?.dispose();
+  updateCheckerService?.dispose();
 }

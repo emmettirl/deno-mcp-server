@@ -1,6 +1,18 @@
 import * as vscode from "vscode";
 
 /**
+ * Forward declarations
+ */
+export interface DenoMcpServerDefinitionProvider extends vscode.Disposable {
+  refreshServers(): void;
+}
+
+export interface UpdateCheckerService extends vscode.Disposable {
+  initialize(): Promise<void>;
+  checkForUpdates(): Promise<void>;
+}
+
+/**
  * Extension configuration interface
  */
 export interface ExtensionConfig {
@@ -56,8 +68,9 @@ export interface IMCPConfigurationManager {
 export interface ExtensionManagers {
   serverManager: IMCPServerManager;
   commandRunner: IDenoCommandRunner;
-  configManager: IMCPConfigurationManager;
   outputChannel: vscode.OutputChannel;
+  mcpServerDefinitionProvider: DenoMcpServerDefinitionProvider;
+  updateCheckerService: UpdateCheckerService;
 }
 
 /**

@@ -161,6 +161,12 @@
         "mac": "cmd+shift+t",
         "when": "editorTextFocus"
       }
+    ],
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "deno-mcp-server.definitions",
+        "label": "Deno MCP Server"
+      }
     ]
   },
   "scripts": {

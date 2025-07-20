@@ -1,5 +1,10 @@
 import * as vscode from "vscode";
-import { getDenoMCPServerConfig, loadMCPConfig, saveMCPConfig } from "./config/index";
+import {
+  getDenoMCPServerConfig,
+  loadMCPConfig,
+  mergeDenoMCPConfig,
+  saveMCPConfig,
+} from "./config/index";
 
 /**
  * MCP Configuration manager class
@@ -20,13 +25,13 @@ export class MCPConfigurationManager {
    */
   async setupMCPConfiguration(): Promise<void> {
     try {
-      const config = loadMCPConfig(this.outputChannel);
+      const existingConfig = loadMCPConfig(this.outputChannel);
       const serverName = "deno-mcp-server";
 
       // Check if our server is already configured
-      if (config.servers?.[serverName]) {
+      if (existingConfig.servers?.[serverName]) {
         // Verify the configuration includes workspace argument
-        const serverConfig = config.servers[serverName];
+        const serverConfig = existingConfig.servers[serverName];
         const hasWorkspaceArg = serverConfig.args?.includes("--workspace");
 
         if (hasWorkspaceArg) {
@@ -42,17 +47,20 @@ export class MCPConfigurationManager {
         }
       }
 
-      // Add our server configuration
-      if (!config.servers) {
-        config.servers = {};
-      }
-
-      config.servers[serverName] = getDenoMCPServerConfig(
+      // Generate the new server configuration with dynamic port support
+      const denoServerConfig = await getDenoMCPServerConfig(
         this.context,
         this.outputChannel,
       );
 
-      if (saveMCPConfig(config, this.outputChannel)) {
+      // Safely merge the configuration to preserve other MCP servers
+      const mergedConfig = mergeDenoMCPConfig(
+        existingConfig,
+        denoServerConfig,
+        this.outputChannel,
+      );
+
+      if (saveMCPConfig(mergedConfig, this.outputChannel)) {
         vscode.window.showInformationMessage(
           "Deno MCP server has been automatically configured in VS Code MCP settings",
         );

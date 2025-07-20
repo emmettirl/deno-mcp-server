@@ -1,8 +1,6 @@
 import * as vscode from "vscode";
 import { CommandHandler, ExtensionManagers } from "../types";
 import { COMMANDS } from "../config/constants";
-import { MCPConfigurationManager } from "../mcpConfig";
-import { UpdateCheckerService } from "../services/updateChecker";
 
 /**
  * Command registry for VS Code command registration and handlers
@@ -12,7 +10,6 @@ export class CommandRegistry {
   constructor(
     private readonly context: vscode.ExtensionContext,
     private readonly managers: ExtensionManagers,
-    private readonly updateChecker: UpdateCheckerService,
   ) {}
 
   /**
@@ -126,8 +123,8 @@ export class CommandRegistry {
   private async handleConfigureMCPCommand(): Promise<void> {
     const choice = await vscode.window.showQuickPick(
       [
-        { label: "Setup/Update Configuration", value: "setup" },
-        { label: "Force Update Configuration", value: "force" },
+        { label: "Refresh MCP Server Definitions", value: "refresh" },
+        { label: "View MCP Server Status", value: "status" },
       ],
       {
         placeHolder: "Choose MCP configuration action",
@@ -138,18 +135,17 @@ export class CommandRegistry {
       return;
     }
 
-    const mcpConfigManager = new MCPConfigurationManager(this.context);
-
-    if (choice.value === "force") {
-      await mcpConfigManager.forceUpdateMCPConfiguration();
-    } else {
-      await mcpConfigManager.setupMCPConfiguration();
+    if (choice.value === "refresh") {
+      this.managers.mcpServerDefinitionProvider.refreshServers();
+      vscode.window.showInformationMessage("MCP server definitions refreshed");
+    } else if (choice.value === "status") {
+      this.managers.outputChannel.show();
     }
   }
 
   private async handleCheckUpdatesCommand(): Promise<void> {
     try {
-      await this.updateChecker.checkForUpdates();
+      await this.managers.updateCheckerService.checkForUpdates();
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       vscode.window.showErrorMessage(
