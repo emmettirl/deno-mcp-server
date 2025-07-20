@@ -1,9 +1,6 @@
 import * as vscode from "vscode";
 import { VersionComparator } from "../../utils/VersionComparator";
-import {
-  type GitHubRelease,
-  ReleaseProcessor,
-} from "../github/ReleaseProcessor";
+import { type GitHubRelease, ReleaseProcessor } from "../github/ReleaseProcessor";
 import { GitHubApiClient } from "../github/GitHubApiClient";
 import { UpdateConfiguration } from "../config/UpdateConfiguration";
 import { type UpdateCheckResult } from "../notifications/UpdateNotificationManager";

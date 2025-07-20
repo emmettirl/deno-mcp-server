@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import { ReleaseProcessor } from "../../../services/github/ReleaseProcessor";
-import { mockGitHubRelease } from "../updateChecker/TestHelpers";
+import { mockGitHubRelease } from "./TestHelpers";
 
 suite("ReleaseProcessor Tests", () => {
   suite("Version Extraction", () => {

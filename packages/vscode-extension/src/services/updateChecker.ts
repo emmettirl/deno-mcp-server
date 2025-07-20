@@ -8,6 +8,7 @@ import {
 import { UpdateDownloader } from "./download/UpdateDownloader";
 import { UpdateScheduler } from "./scheduler/UpdateScheduler";
 import { UpdateCheckOrchestrator } from "./orchestrator/UpdateCheckOrchestrator";
+import { VersionComparator } from "../utils/VersionComparator";
 
 /**
  * Service for checking and managing updates from GitHub releases
@@ -63,9 +64,7 @@ export class UpdateCheckerService {
     // Schedule background checks if enabled
     const checkInterval = this.config.getCheckInterval();
     if (checkInterval !== "manual") {
-      await this.scheduler.scheduleBackgroundChecks(() =>
-        this.performBackgroundUpdateCheck()
-      );
+      await this.scheduler.scheduleBackgroundChecks(() => this.performBackgroundUpdateCheck());
     }
   }
 
@@ -208,7 +207,6 @@ export class UpdateCheckerService {
    * @deprecated For testing compatibility only - use VersionComparator.compareVersions directly
    */
   private compareVersions(current: string, latest: string): number {
-    const { VersionComparator } = require("../utils/VersionComparator");
     return VersionComparator.compareVersions(current, latest);
   }
 
