@@ -34,12 +34,18 @@ suite("Update Checker Service Tests", () => {
 
     // Test that configuration keys exist
     assert.strictEqual(typeof config.get("autoUpdate.enabled"), "boolean");
-    assert.strictEqual(typeof config.get("autoUpdate.checkInterval"), "string");
+    assert.strictEqual(
+      typeof config.get("autoUpdate.checkInterval"),
+      "string",
+    );
     assert.strictEqual(
       typeof config.get("autoUpdate.includePreReleases"),
       "boolean",
     );
-    assert.strictEqual(typeof config.get("autoUpdate.autoDownload"), "boolean");
+    assert.strictEqual(
+      typeof config.get("autoUpdate.autoDownload"),
+      "boolean",
+    );
   });
 
   test("Should handle manual update check", async () => {

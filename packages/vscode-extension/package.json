@@ -85,6 +85,11 @@
         "command": "deno-mcp.checkUpdates",
         "title": "Check for Updates",
         "category": "Deno MCP"
+      },
+      {
+        "command": "deno-mcp.viewReleases",
+        "title": "View Release History",
+        "category": "Deno MCP"
       }
     ],
     "configuration": {

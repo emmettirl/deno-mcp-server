@@ -16,31 +16,33 @@ Technical documentation for developers working on the project:
 
 User-facing guides and tutorials:
 
-- **project-wide-operations.md** - How to use project-wide MCP operations
+- **PROJECT_WIDE_OPERATIONS.md** - How to use project-wide MCP operations
 - **examples.md** - Usage examples and code samples
 
 ### 📁 `fixes/`
 
 Documentation of bug fixes and resolutions:
 
-- **mcp-workspace-fix.md** - Resolution of MCP server workspace root issue
+- **MCP_WORKSPACE_FIX.md** - Resolution of MCP server workspace root issue
 - **line-ending-fix.md** - Line ending consistency fix documentation
 
 ### 📁 `workflows/`
 
 Development workflow documentation and change reports:
 
-- **tool-enhancements.md** - MCP server tools enhancement summary
-- **publisher-update.md** - Extension publisher identifier update
+- **TOOL_ENHANCEMENTS.md** - MCP server tools enhancement summary
+- **PUBLISHER_UPDATE.md** - Extension publisher identifier update
 - **cleanup-plan.md** - Project cleanup and organization plan
 - **issue-4-cleanup.md** - Issue #4 cleanup workflow
 - **issue-5-large-file-refactoring.md** - Large file refactoring workflow
+- **documentation-reorganization.md** - Documentation structure reorganization
+- **security-review-and-license-migration.md** - Security review and license changes
 
 ## Quick Links
 
 ### For Users
 
-- [Project-Wide Operations Guide](guides/project-wide-operations.md)
+- [Project-Wide Operations Guide](guides/PROJECT_WIDE_OPERATIONS.md)
 - [Usage Examples](guides/examples.md)
 
 ### For Developers
@@ -51,7 +53,8 @@ Development workflow documentation and change reports:
 
 ### For Contributors
 
-- [Recent Tool Enhancements](workflows/tool-enhancements.md)
+- [MCP Tools Enhancement Summary](workflows/TOOL_ENHANCEMENTS.md)
+- [Documentation Organization](workflows/documentation-reorganization.md)
 - [Development Workflows](workflows/)
 
 ## File Naming Convention

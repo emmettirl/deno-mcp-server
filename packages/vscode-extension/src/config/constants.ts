@@ -13,6 +13,7 @@ export const COMMANDS = {
   SHOW_STATUS: "deno-mcp.showStatus",
   CONFIGURE_MCP: "deno-mcp.configureMCP",
   CHECK_UPDATES: "deno-mcp.checkUpdates",
+  VIEW_RELEASES: "deno-mcp.viewReleases",
 } as const;
 
 /**

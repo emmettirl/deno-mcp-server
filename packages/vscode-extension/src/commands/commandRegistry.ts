@@ -28,6 +28,7 @@ export class CommandRegistry {
       [COMMANDS.SHOW_STATUS, this.handleShowStatusCommand.bind(this)],
       [COMMANDS.CONFIGURE_MCP, this.handleConfigureMCPCommand.bind(this)],
       [COMMANDS.CHECK_UPDATES, this.handleCheckUpdatesCommand.bind(this)],
+      [COMMANDS.VIEW_RELEASES, this.handleViewReleasesCommand.bind(this)],
     ];
 
     const disposables = commands.map(([commandId, handler]) =>
@@ -150,6 +151,18 @@ export class CommandRegistry {
       const errorMsg = error instanceof Error ? error.message : String(error);
       vscode.window.showErrorMessage(
         `Failed to check for updates: ${errorMsg}`,
+      );
+    }
+  }
+
+  private async handleViewReleasesCommand(): Promise<void> {
+    try {
+      const releaseUrl = `https://github.com/emmettirl/deno-mcp-server/releases`;
+      await vscode.env.openExternal(vscode.Uri.parse(releaseUrl));
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      vscode.window.showErrorMessage(
+        `Failed to open releases page: ${errorMsg}`,
       );
     }
   }

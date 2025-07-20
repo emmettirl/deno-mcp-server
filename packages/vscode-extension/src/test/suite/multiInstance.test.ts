@@ -4,7 +4,10 @@ import { PortManager } from "../../utils/portManager";
 suite("Multi-Instance Support Tests", () => {
   test("PortManager should find available ports", async () => {
     const port = await PortManager.findAvailablePort(3000, 3010);
-    assert.ok(port >= 3000 && port <= 3010, "Port should be in valid range");
+    assert.ok(
+      port >= 3000 && port <= 3010,
+      "Port should be in valid range",
+    );
   });
 
   test("PortManager should detect different workspace port assignments", async () => {
@@ -31,7 +34,11 @@ suite("Multi-Instance Support Tests", () => {
     const key1 = PortManager.getWorkspacePortKey(workspace);
     const key2 = PortManager.getWorkspacePortKey(workspace);
 
-    assert.strictEqual(key1, key2, "Same workspace should generate same key");
+    assert.strictEqual(
+      key1,
+      key2,
+      "Same workspace should generate same key",
+    );
   });
 
   test("PortManager should handle undefined workspace", () => {

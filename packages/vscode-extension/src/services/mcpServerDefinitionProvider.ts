@@ -32,7 +32,9 @@ export class DenoMcpServerDefinitionProvider
     vscode.McpStdioServerDefinition[]
   > {
     try {
-      this.outputChannel.appendLine("Providing Deno MCP server definitions...");
+      this.outputChannel.appendLine(
+        "Providing Deno MCP server definitions...",
+      );
 
       const workspaceRoot = getWorkspaceRootPath();
       if (!workspaceRoot) {
@@ -96,13 +98,17 @@ export class DenoMcpServerDefinitionProvider
         return undefined;
       }
 
-      this.outputChannel.appendLine(`Resolving MCP server: ${server.label}`);
+      this.outputChannel.appendLine(
+        `Resolving MCP server: ${server.label}`,
+      );
 
       // Verify the server path exists
       const serverPath = this.getServerPath();
       const fs = require("fs");
       if (!fs.existsSync(serverPath)) {
-        this.outputChannel.appendLine(`Server path not found: ${serverPath}`);
+        this.outputChannel.appendLine(
+          `Server path not found: ${serverPath}`,
+        );
         vscode.window.showErrorMessage(
           `Deno MCP server not found at: ${serverPath}. Please ensure the extension is properly installed.`,
         );
@@ -123,7 +129,9 @@ export class DenoMcpServerDefinitionProvider
 
           // Find a new port
           const workspaceRoot = getWorkspaceRootPath();
-          const newPort = await PortManager.getWorkspacePort(workspaceRoot);
+          const newPort = await PortManager.getWorkspacePort(
+            workspaceRoot,
+          );
 
           // Update the args with the new port
           const newArgs = [...(server.args || [])];
@@ -133,7 +141,9 @@ export class DenoMcpServerDefinitionProvider
           }
 
           server.args = newArgs;
-          this.outputChannel.appendLine(`Updated to use port ${newPort}`);
+          this.outputChannel.appendLine(
+            `Updated to use port ${newPort}`,
+          );
         }
       }
 
@@ -142,7 +152,9 @@ export class DenoMcpServerDefinitionProvider
       );
       return server;
     } catch (error) {
-      this.outputChannel.appendLine(`Error resolving MCP server: ${error}`);
+      this.outputChannel.appendLine(
+        `Error resolving MCP server: ${error}`,
+      );
       console.error("Error resolving MCP server:", error);
       vscode.window.showErrorMessage(
         `Failed to start Deno MCP server: ${error}`,
@@ -197,7 +209,9 @@ export class DenoMcpServerDefinitionProvider
 
       const fs = require("fs");
       if (fs.existsSync(packagePath)) {
-        const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+        const packageJson = JSON.parse(
+          fs.readFileSync(packagePath, "utf8"),
+        );
         return packageJson.version || "1.0.0";
       }
     } catch (error) {

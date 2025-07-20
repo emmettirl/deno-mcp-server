@@ -118,7 +118,7 @@ jobs:
           cache-dependency-path: packages/vscode-extension/package-lock.json
 
       - name: 🏗️ Build artifacts (no tests)
-        run: .\build-artifacts.ps1 -ShowVerbose
+        run: .\scripts\build-artifacts.ps1 -ShowVerbose
         shell: pwsh
 
       - name: 📤 Upload Extension Artifact
