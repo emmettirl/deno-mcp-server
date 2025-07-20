@@ -366,7 +366,10 @@ export class UpdateCheckerService {
   /**
    * Truncate release notes for display in notification
    */
-  private truncateReleaseNotes(body: string, maxLength: number = 200): string {
+  private truncateReleaseNotes(
+    body: string,
+    maxLength: number = 200,
+  ): string {
     return TextFormatter.truncateReleaseNotes(body, maxLength);
   }
 }
