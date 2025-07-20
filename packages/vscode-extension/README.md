@@ -18,14 +18,11 @@ Protocol) server to provide enhanced development workflows for Deno projects.
 
 ### MCP Server Integration
 
-- **Auto-detection** - Automatically finds and uses the packaged MCP server
-  (`../mod.ts` or `../main.ts`)
-- **Start MCP Server** - Launch the integrated Deno MCP server
-- **Stop MCP Server** - Stop the running MCP server
-- **Status Bar Integration** - Shows MCP server status with click-to-show output
-- **Transport Modes** - Supports both stdio (default) and HTTP transport modes
-- **Fallback Support** - Uses mock server for development if packaged server not
-  available
+- **VS Code MCP API Integration** - Uses VS Code's official MCP Server Definition Provider API
+- **Auto-detection** - Automatically finds and configures the MCP server in monorepo structure
+- **Dynamic Port Allocation** - Per-workspace port management to prevent conflicts
+- **Configure MCP Integration** - Refresh server definitions and view status
+- **No Configuration Files** - Eliminates mcp.json conflicts with VS Code Settings Sync
 
 ### Automatic Features
 
