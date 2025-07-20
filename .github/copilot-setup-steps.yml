@@ -1,0 +1,60 @@
+name: Setup Deno MCP Server Development Environment
+on:
+  workflow_call:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      # Setup Deno for server package
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      # Setup Node.js for VS Code extension
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: packages/vscode-extension/package-lock.json
+
+      # Install VS Code extension dependencies
+      - name: Install VS Code Extension Dependencies
+        working-directory: packages/vscode-extension
+        run: npm ci
+
+      # Cache Deno dependencies by running check
+      - name: Cache Deno Dependencies
+        working-directory: packages/server
+        run: |
+          deno cache --reload src/main.ts
+          deno cache --reload src/server.ts
+          deno cache --reload src/tools/index.ts
+
+      # Verify Deno server can build and run basic checks
+      - name: Verify Deno Server
+        working-directory: packages/server
+        run: |
+          deno task lint
+          deno task check
+          deno task fmt --check
+
+      # Verify VS Code extension can compile
+      - name: Verify VS Code Extension Build
+        working-directory: packages/vscode-extension
+        run: |
+          npm run check-types
+          npm run lint
+          npm run compile
+
+      # Run tests to ensure environment is ready
+      - name: Run Tests
+        working-directory: packages/vscode-extension
+        run: npm test
+
+      # Verify Deno server tests
+      - name: Run Deno Server Tests
+        working-directory: packages/server
+        run: deno task test

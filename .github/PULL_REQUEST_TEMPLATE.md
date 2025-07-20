@@ -96,9 +96,21 @@
 
 ---
 
+**For Copilot Code Review:**
+
+- [ ] All acceptance criteria from the original issue are met
+- [ ] Code follows established patterns in the codebase
+- [ ] Both VS Code extension and Deno server components work together properly
+- [ ] Security best practices are followed
+- [ ] TypeScript compilation successful with no errors
+- [ ] All linting passes (ESLint for extension, Deno lint for server)
+- [ ] Code formatting applied (ES6 imports, proper style)
+- [ ] All tests pass (140+ existing tests continue to work)
+
 **For Maintainers:**
 
 - [ ] This PR is ready for review
 - [ ] This PR needs additional work
 - [ ] This PR requires special attention to security
 - [ ] This PR requires performance testing
+- [ ] This PR was created by Copilot coding agent
