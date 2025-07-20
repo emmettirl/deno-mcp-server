@@ -83,16 +83,12 @@ export class MCPServerManager implements IMCPServerManager {
       );
     }
 
-    // Fallback to mock server for development/testing
-    // Use extension context to get the correct path
-    const mockServerPath = path.join(
-      this.context.extensionPath,
-      SERVER_FILES.MOCK_SERVER,
-    );
+    // If no local server found, use remote version
+    const remoteServerUrl = "https://deno.land/x/deno_mcp_server/src/main.ts";
     this.outputChannel.appendLine(
-      `Using mock server as fallback: ${mockServerPath}`,
+      `Using remote server as fallback: ${remoteServerUrl}`,
     );
-    return mockServerPath;
+    return remoteServerUrl;
   }
 
   private buildServerCommand(

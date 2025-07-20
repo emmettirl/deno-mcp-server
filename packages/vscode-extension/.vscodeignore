@@ -11,6 +11,4 @@ vsc-extension-quickstart.md
 **/eslint.config.mjs
 **/*.map
 **/*.ts
-# Include mock server for fallback
-!mock-mcp-server.ts
 **/.vscode-test.*

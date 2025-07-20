@@ -66,7 +66,7 @@ export const EXTENSION = {
 export const SERVER_FILES = {
   MOD_TS: "mod.ts",
   MAIN_TS: "main.ts",
-  MOCK_SERVER: "mock-mcp-server.ts",
+  CLI_TS: "cli.ts",
 } as const;
 
 /**

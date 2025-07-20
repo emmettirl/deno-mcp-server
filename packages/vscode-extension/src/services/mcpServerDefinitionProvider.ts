@@ -175,24 +175,40 @@ export class DenoMcpServerDefinitionProvider
    * Get the path to the MCP server executable
    */
   private getServerPath(): string {
-    // Try to find the server in the extension's installation directory first
-    const extensionServerPath = vscode.Uri.joinPath(
-      this.context.extensionUri,
-      "node_modules",
-      "@emmettirl",
-      "deno-mcp-server",
-      "src",
-      "main.ts",
-    ).fsPath;
-
-    // Check if it exists
-    const fs = require("fs");
-    if (fs.existsSync(extensionServerPath)) {
-      return extensionServerPath;
+    // First check if user has configured a custom path
+    const config = vscode.workspace.getConfiguration("deno-mcp");
+    const configPath = config.get<string>("mcpServerPath");
+    if (configPath) {
+      return configPath;
     }
 
-    // Fallback to looking for a globally installed version
-    // This is a simplified approach - in production you might want to check common install locations
+    // Look for the server in the monorepo structure
+    const fs = require("fs");
+
+    // Try different possible server locations
+    const possiblePaths = [
+      vscode.Uri.joinPath(this.context.extensionUri, "..", "server", "cli.ts")
+        .fsPath,
+      vscode.Uri.joinPath(
+        this.context.extensionUri,
+        "..",
+        "server",
+        "src",
+        "main.ts",
+      ).fsPath,
+      vscode.Uri.joinPath(this.context.extensionUri, "..", "server", "mod.ts")
+        .fsPath,
+    ];
+
+    for (const serverPath of possiblePaths) {
+      if (fs.existsSync(serverPath)) {
+        this.outputChannel.appendLine(`Found MCP server at: ${serverPath}`);
+        return serverPath;
+      }
+    }
+
+    // If no local server found, use the remote version
+    this.outputChannel.appendLine("Using remote Deno MCP server");
     return "https://deno.land/x/deno_mcp_server/src/main.ts";
   }
 
