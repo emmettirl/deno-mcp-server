@@ -3,7 +3,7 @@
   "displayName": "Deno MCP Extension",
   "description": "Private VS Code extension integrating Deno MCP server for enhanced development workflows",
   "version": "0.0.1",
-  "publisher": "your-publisher",
+  "publisher": "emmettirl",
   "repository": {
     "type": "git",
     "url": "https://github.com/emmettirl/deno-mcp-server.git"

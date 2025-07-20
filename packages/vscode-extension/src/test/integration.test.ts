@@ -6,7 +6,7 @@ suite("Integration Tests", () => {
   suite("Extension Lifecycle", () => {
     test("Should activate extension completely", async () => {
       const extension = vscode.extensions.getExtension(
-        "your-publisher.deno-mcp-extension",
+        "emmettirl.deno-mcp-extension",
       );
       assert.ok(extension, "Extension should be available");
 

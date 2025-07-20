@@ -121,7 +121,26 @@ export class CommandRegistry {
   }
 
   private async handleConfigureMCPCommand(): Promise<void> {
+    const choice = await vscode.window.showQuickPick(
+      [
+        { label: "Setup/Update Configuration", value: "setup" },
+        { label: "Force Update Configuration", value: "force" },
+      ],
+      {
+        placeHolder: "Choose MCP configuration action",
+      },
+    );
+
+    if (!choice) {
+      return;
+    }
+
     const mcpConfigManager = new MCPConfigurationManager(this.context);
-    await mcpConfigManager.setupMCPConfiguration();
+
+    if (choice.value === "force") {
+      await mcpConfigManager.forceUpdateMCPConfiguration();
+    } else {
+      await mcpConfigManager.setupMCPConfiguration();
+    }
   }
 }

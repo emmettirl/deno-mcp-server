@@ -22,24 +22,31 @@ async function handleDenoCheck(
 
     const denoArgs = ["check"];
 
-    if (all) {
-      denoArgs.push("--all");
-    }
-
-    if (remote) {
-      denoArgs.push("--remote");
-    }
-
     if (files && files.length > 0) {
+      // If specific files are provided, use them
       denoArgs.push(...files);
+
+      // Add flags as requested
+      if (all) {
+        denoArgs.push("--all");
+      }
+      if (remote) {
+        denoArgs.push("--remote");
+      }
     } else {
-      // If no files specified, check main entry point
-      denoArgs.push("main.ts");
+      // If no files specified, check entire project
+      denoArgs.push("--all");
+
+      // Remote flag can still be used for project-wide checking
+      if (remote) {
+        denoArgs.push("--remote");
+      }
     }
 
     const result = await executeDeno(denoArgs, workspaceRoot);
 
-    let output = `Deno type check completed with code: ${result.code}\n\n`;
+    const scope = (files && files.length > 0) ? `specified files` : `entire project`;
+    let output = `Deno type check for ${scope} completed with code: ${result.code}\n\n`;
 
     if (result.stdout) {
       output += `STDOUT:\n${result.stdout}\n\n`;
@@ -50,9 +57,9 @@ async function handleDenoCheck(
     }
 
     if (result.success) {
-      output += "✅ Type checking passed!";
+      output += `✅ Type checking passed for ${scope}!`;
     } else {
-      output += "❌ Type checking failed";
+      output += `❌ Type checking failed for ${scope}`;
     }
 
     return {
@@ -73,7 +80,8 @@ async function handleDenoCheck(
 
 export const checkTool: ToolDefinition = {
   name: "deno_check",
-  description: "Type check Deno TypeScript code using deno check",
+  description:
+    "Type check Deno TypeScript code using deno check. Checks entire project when no specific files are provided.",
   inputSchema: {
     type: "object",
     properties: {
@@ -84,12 +92,13 @@ export const checkTool: ToolDefinition = {
       files: {
         type: "array",
         items: { type: "string" },
-        description: "Specific files to check (optional, checks all if not specified)",
+        description: "Specific files to check (optional, checks entire project if not specified)",
       },
       all: {
         type: "boolean",
         default: false,
-        description: "Check all files including remote dependencies",
+        description:
+          "Check all files including remote dependencies (only applies when specific files are provided)",
       },
       remote: {
         type: "boolean",

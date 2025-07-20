@@ -63,9 +63,10 @@ async function handleDenoFmt(args: ToolArgs): Promise<Record<string, unknown>> {
     // Use optimized permissions for execution
     const result = await executeDeno(denoArgs, workspaceRoot);
 
+    const scope = (files && files.length > 0) ? `specified files` : `entire project`;
     let output = `Deno format ${
       check ? "check" : "execution"
-    } completed with code: ${result.code}\n\n`;
+    } for ${scope} completed with code: ${result.code}\n\n`;
 
     if (result.stdout) {
       output += `STDOUT:\n${result.stdout}\n\n`;
@@ -76,9 +77,13 @@ async function handleDenoFmt(args: ToolArgs): Promise<Record<string, unknown>> {
     }
 
     if (result.success) {
-      output += check ? "✅ All files are properly formatted!" : "✅ Files formatted successfully!";
+      output += check
+        ? `✅ All files in ${scope} are properly formatted!`
+        : `✅ ${scope.charAt(0).toUpperCase() + scope.slice(1)} formatted successfully!`;
     } else {
-      output += check ? "❌ Some files need formatting" : "❌ Format operation failed";
+      output += check
+        ? `❌ Some files in ${scope} need formatting`
+        : `❌ Format operation failed for ${scope}`;
     }
 
     return {
@@ -99,7 +104,8 @@ async function handleDenoFmt(args: ToolArgs): Promise<Record<string, unknown>> {
 
 export const fmtTool: ToolDefinition = {
   name: "deno_fmt",
-  description: "Format Deno TypeScript/JavaScript code using deno fmt",
+  description:
+    "Format Deno TypeScript/JavaScript code using deno fmt. Formats entire project when no specific files are provided.",
   inputSchema: {
     type: "object",
     properties: {
@@ -110,7 +116,7 @@ export const fmtTool: ToolDefinition = {
       files: {
         type: "array",
         items: { type: "string" },
-        description: "Specific files to format (optional, formats all if not specified)",
+        description: "Specific files to format (optional, formats entire project if not specified)",
       },
       check: {
         type: "boolean",

@@ -9,7 +9,7 @@ suite("Deno MCP Extension Test Suite", () => {
 
   suiteSetup(async () => {
     extension = vscode.extensions.getExtension(
-      "your-publisher.deno-mcp-extension",
+      "emmettirl.deno-mcp-extension",
     );
     if (extension) {
       await extension.activate();

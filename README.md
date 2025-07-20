@@ -186,13 +186,28 @@ cd packages/vscode-extension && npm run test:coverage
 
 ## 📖 Documentation
 
-- **[BUILD.md](BUILD.md)** - Comprehensive build instructions
-- **[docs/](docs/)** - Project documentation and plans
-- **[Server Docs](packages/server/)** - MCP server implementation details
-- **[Extension Docs](packages/vscode-extension/)** - VS Code extension guide
-- **[Security Guide](packages/server/docs/security.md)** - Security best
-  practices
-- **[API Reference](packages/server/docs/api.md)** - Complete API documentation
+Comprehensive documentation is organized in the [`docs/`](docs/) directory:
+
+### 📚 **For Users**
+- **[Project-Wide Operations Guide](docs/guides/project-wide-operations.md)** - Using MCP tools on entire projects
+- **[Usage Examples](docs/guides/examples.md)** - Code samples and tutorials
+
+### 🔧 **For Developers**
+- **[API Documentation](docs/development/api.md)** - Complete API reference
+- **[Security Guidelines](docs/development/security.md)** - Security implementation details
+- **[Build Instructions](docs/development/build.md)** - Development setup and build process
+
+### 🐛 **Fixes & Troubleshooting**
+- **[MCP Workspace Fix](docs/fixes/mcp-workspace-fix.md)** - Resolving workspace root issues
+- **[Line Ending Fix](docs/fixes/line-ending-fix.md)** - Cross-platform consistency fixes
+
+### 🔄 **Development Workflows**
+- **[Tool Enhancements](docs/workflows/tool-enhancements.md)** - Recent improvements summary
+- **[Publisher Update](docs/workflows/publisher-update.md)** - Extension identifier changes
+
+### 📦 **Package-Specific Documentation**
+- **[Server Package](packages/server/README.md)** - MCP server implementation details
+- **[VS Code Extension](packages/vscode-extension/README.md)** - Extension development guide
 
 ## 🤝 Contributing
 

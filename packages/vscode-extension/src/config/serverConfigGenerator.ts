@@ -28,17 +28,15 @@ export function getDenoMCPServerConfig(
     const serverPath = findMCPServerPath(context, outputChannel);
     const args = ["run", "--allow-all", serverPath];
 
-    // If using CLI entry point, add workspace argument
-    if (serverPath.endsWith("cli.ts")) {
-      // Try to determine workspace root
-      const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri
-        .fsPath;
-      if (workspaceRoot) {
-        args.push("--workspace", workspaceRoot);
-        outputChannel.appendLine(
-          `Adding workspace argument: ${workspaceRoot}`,
-        );
-      }
+    // Always add workspace argument if we have a workspace
+    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    if (workspaceRoot) {
+      args.push("--workspace", workspaceRoot);
+      outputChannel.appendLine(
+        `Adding workspace argument: ${workspaceRoot}`,
+      );
+    } else {
+      outputChannel.appendLine("Warning: No workspace folder detected");
     }
 
     return {

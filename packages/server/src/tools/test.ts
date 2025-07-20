@@ -59,7 +59,8 @@ async function handleDenoTest(
 
     const result = await executeDeno(denoArgs, workspaceRoot);
 
-    let output = `Deno test execution completed with code: ${result.code}\n\n`;
+    const scope = (files && files.length > 0) ? `specified test files` : `entire project`;
+    let output = `Deno test execution for ${scope} completed with code: ${result.code}\n\n`;
 
     if (result.stdout) {
       output += `STDOUT:\n${result.stdout}\n\n`;
@@ -70,9 +71,9 @@ async function handleDenoTest(
     }
 
     if (result.success) {
-      output += "✅ All tests passed!";
+      output += `✅ All tests passed in ${scope}!`;
     } else {
-      output += "❌ Some tests failed";
+      output += `❌ Some tests failed in ${scope}`;
     }
 
     return {
@@ -93,7 +94,8 @@ async function handleDenoTest(
 
 export const testTool: ToolDefinition = {
   name: "deno_test",
-  description: "Run Deno tests using deno test",
+  description:
+    "Run Deno tests using deno test. Runs all tests in the project when no specific files are provided.",
   inputSchema: {
     type: "object",
     properties: {
@@ -104,7 +106,8 @@ export const testTool: ToolDefinition = {
       files: {
         type: "array",
         items: { type: "string" },
-        description: "Specific test files to run (optional, runs all if not specified)",
+        description:
+          "Specific test files to run (optional, runs all tests in project if not specified)",
       },
       watch: {
         type: "boolean",

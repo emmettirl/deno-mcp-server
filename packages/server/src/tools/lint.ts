@@ -36,7 +36,10 @@ async function handleDenoLint(
 
     const result = await executeDeno(denoArgs, workspaceRoot);
 
-    let output = `Deno lint ${fix ? "with fixes" : ""} completed with code: ${result.code}\n\n`;
+    const scope = (files && files.length > 0) ? `specified files` : `entire project`;
+    let output = `Deno lint ${
+      fix ? "with fixes " : ""
+    }for ${scope} completed with code: ${result.code}\n\n`;
 
     if (result.stdout) {
       output += `STDOUT:\n${result.stdout}\n\n`;
@@ -47,9 +50,9 @@ async function handleDenoLint(
     }
 
     if (result.success) {
-      output += "✅ Linting completed successfully!";
+      output += `✅ Linting completed successfully for ${scope}!`;
     } else {
-      output += "❌ Linting found issues";
+      output += `❌ Linting found issues in ${scope}`;
     }
 
     return {
@@ -70,7 +73,8 @@ async function handleDenoLint(
 
 export const lintTool: ToolDefinition = {
   name: "deno_lint",
-  description: "Lint Deno TypeScript/JavaScript code using deno lint",
+  description:
+    "Lint Deno TypeScript/JavaScript code using deno lint. Lints entire project when no specific files are provided.",
   inputSchema: {
     type: "object",
     properties: {
@@ -81,7 +85,7 @@ export const lintTool: ToolDefinition = {
       files: {
         type: "array",
         items: { type: "string" },
-        description: "Specific files to lint (optional, lints all if not specified)",
+        description: "Specific files to lint (optional, lints entire project if not specified)",
       },
       fix: {
         type: "boolean",

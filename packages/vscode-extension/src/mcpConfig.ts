@@ -25,10 +25,21 @@ export class MCPConfigurationManager {
 
       // Check if our server is already configured
       if (config.servers?.[serverName]) {
-        this.outputChannel.appendLine(
-          `Deno MCP server already configured in MCP config`,
-        );
-        return;
+        // Verify the configuration includes workspace argument
+        const serverConfig = config.servers[serverName];
+        const hasWorkspaceArg = serverConfig.args?.includes("--workspace");
+
+        if (hasWorkspaceArg) {
+          this.outputChannel.appendLine(
+            `Deno MCP server already configured properly in MCP config`,
+          );
+          return;
+        } else {
+          this.outputChannel.appendLine(
+            `Deno MCP server found but missing workspace argument - updating...`,
+          );
+          // Fall through to update the configuration
+        }
       }
 
       // Add our server configuration
@@ -119,6 +130,47 @@ export class MCPConfigurationManager {
       }
     } catch (error) {
       this.outputChannel.appendLine(
+        `Failed to update MCP configuration: ${error}`,
+      );
+    }
+  }
+
+  /**
+   * Force update MCP configuration (useful for fixing issues)
+   */
+  async forceUpdateMCPConfiguration(): Promise<void> {
+    try {
+      const config = loadMCPConfig(this.outputChannel);
+      const serverName = "deno-mcp-server";
+
+      this.outputChannel.appendLine(
+        "Force updating Deno MCP server configuration...",
+      );
+
+      // Ensure servers object exists
+      if (!config.servers) {
+        config.servers = {};
+      }
+
+      // Always update/overwrite the configuration
+      config.servers[serverName] = getDenoMCPServerConfig(
+        this.context,
+        this.outputChannel,
+      );
+
+      if (saveMCPConfig(config, this.outputChannel)) {
+        vscode.window.showInformationMessage(
+          "Deno MCP server configuration has been updated successfully",
+        );
+        this.outputChannel.appendLine(
+          "Deno MCP server configuration force update completed successfully",
+        );
+      }
+    } catch (error) {
+      this.outputChannel.appendLine(
+        `Failed to force update MCP configuration: ${error}`,
+      );
+      vscode.window.showErrorMessage(
         `Failed to update MCP configuration: ${error}`,
       );
     }
