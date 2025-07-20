@@ -3,8 +3,8 @@
 A comprehensive monorepo containing a secure Model Context Protocol (MCP) server
 built with Deno and a VS Code extension for seamless integration.
 
-[![CI Status](https://github.com/your-username/deno-mcp-server/workflows/CI/badge.svg)](https://github.com/your-username/deno-mcp-server/actions)
-[![Release](https://github.com/your-username/deno-mcp-server/workflows/🚀%20Release/badge.svg)](https://github.com/your-username/deno-mcp-server/releases)
+[![CI Status](https://github.com/emmettirl/deno-mcp-server/workflows/CI/badge.svg)](https://github.com/emmettirl/deno-mcp-server/actions)
+[![Release](https://github.com/emmettirl/deno-mcp-server/workflows/🚀%20Release/badge.svg)](https://github.com/emmettirl/deno-mcp-server/releases)
 
 ## 📦 Packages
 
@@ -21,7 +21,7 @@ built with Deno and a VS Code extension for seamless integration.
 
 ```bash
 # Get the latest release
-curl -s https://api.github.com/repos/your-username/deno-mcp-server/releases/latest \
+curl -s https://api.github.com/repos/emmettirl/deno-mcp-server/releases/latest \
   | grep browser_download_url \
   | cut -d '"' -f 4 \
   | wget -qi -
@@ -33,15 +33,15 @@ code --install-extension deno-mcp-extension.vsix
 **Using Docker:**
 
 ```bash
-docker pull ghcr.io/your-username/deno-mcp-server/server:latest
-docker run -it ghcr.io/your-username/deno-mcp-server/server:latest
+docker pull ghcr.io/emmettirl/deno-mcp-server/server:latest
+docker run -it ghcr.io/emmettirl/deno-mcp-server/server:latest
 ```
 
 ### For Developers
 
 ```bash
 # Clone and setup
-git clone <your-repo-url>
+git clone https://github.com/emmettirl/deno-mcp-server.git
 cd deno-mcp-server
 
 # Build everything
@@ -108,8 +108,8 @@ Each release automatically creates:
   - `deno-mcp-extension.vsix` - Installable extension package
 
 - 🐳 **Docker Images**
-  - `ghcr.io/your-username/deno-mcp-server/server:latest`
-  - `ghcr.io/your-username/deno-mcp-server/server:v1.2.3`
+  - `ghcr.io/emmettirl/deno-mcp-server/server:latest`
+  - `ghcr.io/emmettirl/deno-mcp-server/server:v1.2.3`
 
 - 📝 **Release Notes** - Auto-generated with installation instructions
 
@@ -231,5 +231,9 @@ for details.
 ---
 
 <p align="center">
-  <strong>🚀 Built with Deno • 🎯 Integrated with VS Code • 🔒 Security First</strong>
+  <strong>🚀 Built with Deno • 🎯 Integrated with VS Code </strong>
+</p>
+
+<p align="center">
+  <sub>⚡ Disclaimer: Vibe-coded with Claude Sonnet 4 and GitHub Copilot Agent✨</sub>
 </p>
