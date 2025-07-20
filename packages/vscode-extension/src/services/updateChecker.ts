@@ -191,7 +191,7 @@ export class UpdateCheckerService {
     const releaseDate = new Date(release.published_at).toLocaleDateString();
     const message =
       `🚀 New version available: v${result.latestVersion}\n\nCurrent: v${result.currentVersion}\nReleased: ${releaseDate}\n\n${
-        this.truncateReleaseNotes(release.body)
+        this.truncateReleaseNotes(release.body, 200)
       }`;
 
     // Show detailed update dialog
@@ -323,11 +323,24 @@ export class UpdateCheckerService {
    */
   private compareVersions(v1: string, v2: string): number {
     const normalize = (v: string) => v.replace(/^v/, "");
-    const parts1 = normalize(v1).split(".").map((n) => parseInt(n, 10));
-    const parts2 = normalize(v2).split(".").map((n) => parseInt(n, 10));
+    const version1 = normalize(v1);
+    const version2 = normalize(v2);
+
+    // Handle invalid versions
+    if (!version1 || !version2) {
+      return 0;
+    }
+
+    // Split version and prerelease parts
+    const [ver1, pre1] = version1.split(/[-+]/);
+    const [ver2, pre2] = version2.split(/[-+]/);
+
+    const parts1 = ver1.split(".").map((n) => parseInt(n, 10) || 0);
+    const parts2 = ver2.split(".").map((n) => parseInt(n, 10) || 0);
 
     const maxLength = Math.max(parts1.length, parts2.length);
 
+    // Compare version numbers
     for (let i = 0; i < maxLength; i++) {
       const part1 = parts1[i] || 0;
       const part2 = parts2[i] || 0;
@@ -340,6 +353,19 @@ export class UpdateCheckerService {
       }
     }
 
+    // If versions are equal, compare prerelease identifiers
+    if (pre1 && pre2) {
+      return pre1.localeCompare(pre2);
+    }
+
+    // Prerelease versions are less than release versions
+    if (pre1 && !pre2) {
+      return -1;
+    }
+    if (!pre1 && pre2) {
+      return 1;
+    }
+
     return 0;
   }
 
@@ -347,12 +373,17 @@ export class UpdateCheckerService {
    * Get download URL from GitHub release
    */
   private getDownloadUrl(release: GitHubRelease): string | undefined {
+    // Handle malformed data gracefully
+    if (!release || !Array.isArray(release.assets)) {
+      return release?.html_url;
+    }
+
     // Look for specific assets or use the release page
-    const vsixAsset = release.assets?.find((asset) =>
-      asset.name.includes(".vsix") || asset.name.includes("extension")
+    const vsixAsset = release.assets.find((asset) =>
+      asset?.name?.includes(".vsix") || asset?.name?.includes("extension")
     );
 
-    if (vsixAsset) {
+    if (vsixAsset?.browser_download_url) {
       return vsixAsset.browser_download_url;
     }
 
@@ -451,14 +482,48 @@ export class UpdateCheckerService {
   }
 
   /**
+   * Extract version from GitHub tag
+   */
+  private extractVersionFromTag(tag: string): string {
+    return this.normalizeVersion(tag);
+  }
+
+  /**
+   * Parse GitHub release data
+   */
+  private parseGitHubRelease(release: any): any {
+    if (!release) {
+      return {};
+    }
+
+    return {
+      version: this.extractVersionFromTag(release.tag_name || ""),
+      name: release.name || "",
+      body: release.body || "",
+      downloadUrl: this.getDownloadUrl(release),
+      prerelease: !!release.prerelease,
+    };
+  }
+
+  /**
+   * Get GitHub releases URL
+   */
+  private getGitHubReleasesUrl(includePreReleases: boolean): string {
+    if (includePreReleases) {
+      return `${this.GITHUB_API_BASE}/repos/${this.GITHUB_REPO}/releases`;
+    }
+    return `${this.GITHUB_API_BASE}/repos/${this.GITHUB_REPO}/releases/latest`;
+  }
+
+  /**
    * Truncate release notes for display in notification
    */
-  private truncateReleaseNotes(body: string): string {
+  private truncateReleaseNotes(body: string, maxLength: number = 200): string {
     if (!body) {
       return "No release notes available.";
     }
 
-    // Clean up markdown and limit length
+    // Clean up markdown first
     const cleaned = body
       .replace(/#{1,6}\s/g, "") // Remove markdown headers
       .replace(/\*\*/g, "") // Remove bold markdown
@@ -466,10 +531,11 @@ export class UpdateCheckerService {
       .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Replace links with text
       .trim();
 
-    if (cleaned.length <= 200) {
+    // If cleaned text is short enough, return as-is
+    if (cleaned.length <= maxLength) {
       return cleaned;
     }
 
-    return cleaned.substring(0, 200) + "...";
+    return cleaned.substring(0, maxLength) + "...";
   }
 }
