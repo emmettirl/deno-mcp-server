@@ -5,23 +5,31 @@ This directory contains all documentation for the Deno MCP Server project, organ
 ## Directory Structure
 
 ### 📁 `development/`
+
 Technical documentation for developers working on the project:
+
 - **api.md** - API documentation and technical specifications
-- **security.md** - Security implementation details and guidelines  
+- **security.md** - Security implementation details and guidelines
 - **build.md** - Build process and development setup
 
 ### 📁 `guides/`
+
 User-facing guides and tutorials:
+
 - **project-wide-operations.md** - How to use project-wide MCP operations
 - **examples.md** - Usage examples and code samples
 
 ### 📁 `fixes/`
+
 Documentation of bug fixes and resolutions:
+
 - **mcp-workspace-fix.md** - Resolution of MCP server workspace root issue
 - **line-ending-fix.md** - Line ending consistency fix documentation
 
 ### 📁 `workflows/`
+
 Development workflow documentation and change reports:
+
 - **tool-enhancements.md** - MCP server tools enhancement summary
 - **publisher-update.md** - Extension publisher identifier update
 - **cleanup-plan.md** - Project cleanup and organization plan
@@ -31,15 +39,18 @@ Development workflow documentation and change reports:
 ## Quick Links
 
 ### For Users
+
 - [Project-Wide Operations Guide](guides/project-wide-operations.md)
 - [Usage Examples](guides/examples.md)
 
-### For Developers  
+### For Developers
+
 - [API Documentation](development/api.md)
 - [Security Guidelines](development/security.md)
 - [Build Instructions](development/build.md)
 
 ### For Contributors
+
 - [Recent Tool Enhancements](workflows/tool-enhancements.md)
 - [Development Workflows](workflows/)
 
@@ -53,6 +64,7 @@ Development workflow documentation and change reports:
 ## Contributing to Documentation
 
 When adding new documentation:
+
 1. Choose the appropriate directory based on the content type
 2. Follow the existing naming conventions
 3. Include a clear title and table of contents for longer documents
