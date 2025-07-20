@@ -3,6 +3,7 @@ import { MCPServerManager } from "../managers/serverManager";
 import { DenoCommandRunner } from "../commands/denoCommands";
 import { CommandRegistry } from "../commands/commandRegistry";
 import { MCPConfigurationManager } from "../mcpConfig";
+import { UpdateCheckerService } from "../services/updateChecker";
 import { ExtensionManagers } from "../types";
 import { CONFIG_DEFAULTS, OUTPUT_CHANNELS } from "../config/constants";
 
@@ -26,6 +27,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const serverManager = new MCPServerManager(context);
   const commandRunner = new DenoCommandRunner(outputChannel);
   const configManager = new MCPConfigurationManager(context);
+  const updateChecker = new UpdateCheckerService(context);
 
   // Setup MCP configuration automatically
   configManager.setupMCPConfiguration();
@@ -42,8 +44,13 @@ export function activate(context: vscode.ExtensionContext): void {
   globalManagers = managers;
 
   // Register all commands
-  const commandRegistry = new CommandRegistry(context, managers);
+  const commandRegistry = new CommandRegistry(context, managers, updateChecker);
   commandRegistry.registerAllCommands();
+
+  // Initialize update checker
+  updateChecker.initialize().catch((error: Error) => {
+    console.error("Failed to initialize update checker:", error);
+  });
 
   // Setup event listeners
   setupEventListeners(context, commandRunner);

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { CommandHandler, ExtensionManagers } from "../types";
 import { COMMANDS } from "../config/constants";
 import { MCPConfigurationManager } from "../mcpConfig";
+import { UpdateCheckerService } from "../services/updateChecker";
 
 /**
  * Command registry for VS Code command registration and handlers
@@ -11,6 +12,7 @@ export class CommandRegistry {
   constructor(
     private readonly context: vscode.ExtensionContext,
     private readonly managers: ExtensionManagers,
+    private readonly updateChecker: UpdateCheckerService,
   ) {}
 
   /**
@@ -28,6 +30,7 @@ export class CommandRegistry {
       [COMMANDS.STOP_SERVER, this.handleStopServerCommand.bind(this)],
       [COMMANDS.SHOW_STATUS, this.handleShowStatusCommand.bind(this)],
       [COMMANDS.CONFIGURE_MCP, this.handleConfigureMCPCommand.bind(this)],
+      [COMMANDS.CHECK_UPDATES, this.handleCheckUpdatesCommand.bind(this)],
     ];
 
     const disposables = commands.map(([commandId, handler]) =>
@@ -141,6 +144,17 @@ export class CommandRegistry {
       await mcpConfigManager.forceUpdateMCPConfiguration();
     } else {
       await mcpConfigManager.setupMCPConfiguration();
+    }
+  }
+
+  private async handleCheckUpdatesCommand(): Promise<void> {
+    try {
+      await this.updateChecker.checkForUpdates();
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      vscode.window.showErrorMessage(
+        `Failed to check for updates: ${errorMsg}`,
+      );
     }
   }
 }
