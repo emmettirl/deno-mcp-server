@@ -1,0 +1,50 @@
+{
+  "name": "deno_test",
+  "description": "Run Deno tests using deno test. Runs all tests in the project when no specific files are provided.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "workspacePath": {
+        "type": "string",
+        "description": "Path to the workspace directory"
+      },
+      "files": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Specific test files to run (optional, runs all tests in project if not specified)"
+      },
+      "watch": {
+        "type": "boolean",
+        "default": false,
+        "description": "Watch files and re-run tests on changes"
+      },
+      "coverage": {
+        "type": "boolean",
+        "default": false,
+        "description": "Generate test coverage report"
+      },
+      "filter": {
+        "type": "string",
+        "description": "Filter tests by name pattern"
+      },
+      "parallel": {
+        "type": "boolean",
+        "default": false,
+        "description": "Run tests in parallel"
+      },
+      "failFast": {
+        "type": "boolean",
+        "default": false,
+        "description": "Stop running tests on first failure"
+      }
+    },
+    "required": [
+      "workspacePath"
+    ]
+  },
+  "version": "1.0.0",
+  "lastUpdated": "2025-07-20T17:24:33.171Z",
+  "checksum": "2fc65f73"
+}

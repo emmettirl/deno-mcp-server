@@ -1,0 +1,31 @@
+{
+  "name": "deno_fmt",
+  "description": "Format Deno TypeScript/JavaScript code using deno fmt. Formats entire project when no specific files are provided.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "workspacePath": {
+        "type": "string",
+        "description": "Path to the workspace directory"
+      },
+      "files": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Specific files to format (optional, formats entire project if not specified)"
+      },
+      "check": {
+        "type": "boolean",
+        "default": false,
+        "description": "Check if files are formatted without writing changes"
+      }
+    },
+    "required": [
+      "workspacePath"
+    ]
+  },
+  "version": "1.0.0",
+  "lastUpdated": "2025-07-20T17:24:33.158Z",
+  "checksum": "3696d397"
+}

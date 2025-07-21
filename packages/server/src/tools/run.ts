@@ -2,6 +2,7 @@
 
 import { ToolArgs, ToolDefinition } from "../types.ts";
 import { executeDeno, findWorkspaceRoot } from "../utils.ts";
+import { errorContext, ErrorFactory } from "../errors/index.ts";
 
 async function handleDenoRun(args: ToolArgs): Promise<Record<string, unknown>> {
   const { workspacePath, script, permissions, watch, args: scriptArgs } = args;
@@ -9,11 +10,19 @@ async function handleDenoRun(args: ToolArgs): Promise<Record<string, unknown>> {
   try {
     const workspaceRoot = await findWorkspaceRoot(workspacePath);
     if (!workspaceRoot) {
+      const configError = ErrorFactory.configuration(
+        "Deno workspace not found",
+        errorContext()
+          .operation("findWorkspaceRoot")
+          .component("DenoRunTool")
+          .metadata({ workspacePath })
+          .build(),
+      );
+
       return {
         content: [{
           type: "text",
-          text:
-            "Could not find workspace root. Please ensure the path contains a deno.json or deno.jsonc file.",
+          text: configError.getUserSafeMessage(),
         }],
       };
     }
@@ -72,12 +81,21 @@ async function handleDenoRun(args: ToolArgs): Promise<Record<string, unknown>> {
       }],
     };
   } catch (error) {
+    const executionError = ErrorFactory.execution(
+      "Failed to execute Deno script",
+      errorContext()
+        .operation("denoRun")
+        .component("DenoRunTool")
+        .metadata({ script, workspacePath, permissions, watch })
+        .build(),
+      {},
+      error instanceof Error ? error : undefined,
+    );
+
     return {
       content: [{
         type: "text",
-        text: `Error running deno script: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+        text: `Error running deno script: ${executionError.getUserSafeMessage()}`,
       }],
     };
   }

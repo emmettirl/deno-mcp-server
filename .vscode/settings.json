@@ -18,5 +18,8 @@
     "titleBar.inactiveBackground": "#f9e54f99",
     "titleBar.inactiveForeground": "#15202b99"
   },
-  "peacock.color": "#f9e54f"
+  "peacock.color": "#f9e54f",
+  "deno-mcp.serverPath": "./packages/server/src/main.ts",
+  "deno-mcp.denoPath": "deno",
+  "deno-mcp.useHttpTransport": false
 }

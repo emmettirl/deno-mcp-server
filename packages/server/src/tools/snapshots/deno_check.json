@@ -1,0 +1,36 @@
+{
+  "name": "deno_check",
+  "description": "Type check Deno TypeScript code using deno check. Checks entire project when no specific files are provided.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "workspacePath": {
+        "type": "string",
+        "description": "Path to the workspace directory"
+      },
+      "files": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Specific files to check (optional, checks entire project if not specified)"
+      },
+      "all": {
+        "type": "boolean",
+        "default": false,
+        "description": "Check all files including remote dependencies (only applies when specific files are provided)"
+      },
+      "remote": {
+        "type": "boolean",
+        "default": false,
+        "description": "Check remote dependencies"
+      }
+    },
+    "required": [
+      "workspacePath"
+    ]
+  },
+  "version": "1.0.0",
+  "lastUpdated": "2025-07-20T17:24:33.170Z",
+  "checksum": "660ea8eb"
+}

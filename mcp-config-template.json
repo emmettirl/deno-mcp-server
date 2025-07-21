@@ -1,0 +1,36 @@
+{
+  "servers": {
+    "deno-mcp-server": {
+      "type": "stdio",
+      "command": "deno",
+      "args": [
+        "run",
+        "--allow-all",
+        "d:\\Documents\\Code\\vscode\\deno-mcp-server\\packages\\server\\cli.ts"
+      ],
+      "gallery": false
+    },
+    "github-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-token-here"
+      },
+      "gallery": false
+    },
+    "sequential-thinking": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@hooksie1/sequential-thinking"
+      ],
+      "gallery": false
+    }
+  },
+  "inputs": []
+}

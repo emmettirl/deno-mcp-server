@@ -6,37 +6,37 @@
   ],
   "settings": {
     "workbench.colorCustomizations": {
-      "activityBar.activeBackground": "#fcf29a",
-      "activityBar.background": "#fcf29a",
-      "activityBar.foreground": "#15202b",
-      "activityBar.inactiveForeground": "#15202b99",
-      "activityBarBadge.background": "#06baa7",
-      "activityBarBadge.foreground": "#15202b",
-      "commandCenter.border": "#15202b99",
-      "sash.hoverBorder": "#fcf29a",
-      "statusBar.background": "#faeb69",
-      "statusBar.foreground": "#15202b",
-      "statusBarItem.hoverBackground": "#f8e438",
-      "statusBarItem.remoteBackground": "#faeb69",
-      "statusBarItem.remoteForeground": "#15202b",
-      "titleBar.activeBackground": "#faeb69",
-      "titleBar.activeForeground": "#15202b",
-      "titleBar.inactiveBackground": "#faeb6999",
-      "titleBar.inactiveForeground": "#15202b99",
-      "deno.enable": true,
-      "deno.enablePaths": [
-        "./packages/server"
-      ],
-      "deno.disablePaths": [
-        "./packages/vscode-extension"
-      ],
-      "typescript.preferences.includePackageJsonAutoImports": "auto",
-      "files.exclude": {
-        "**/node_modules": true,
-        "**/out": true,
-        "**/.vscode-test": true
-      }
-    },
+		"activityBar.activeBackground": "#fcf29a",
+		"activityBar.background": "#fcf29a",
+		"activityBar.foreground": "#15202b",
+		"activityBar.inactiveForeground": "#15202b99",
+		"activityBarBadge.background": "#06baa7",
+		"activityBarBadge.foreground": "#15202b",
+		"commandCenter.border": "#15202b99",
+		"sash.hoverBorder": "#fcf29a",
+		"statusBar.background": "#faeb69",
+		"statusBar.foreground": "#15202b",
+		"statusBarItem.hoverBackground": "#f8e438",
+		"statusBarItem.remoteBackground": "#faeb69",
+		"statusBarItem.remoteForeground": "#15202b",
+		"titleBar.activeBackground": "#faeb69",
+		"titleBar.activeForeground": "#15202b",
+		"titleBar.inactiveBackground": "#faeb6999",
+		"titleBar.inactiveForeground": "#15202b99",
+		"deno.enable": true,
+		"deno.enablePaths": [
+			"./packages/server"
+		],
+		"deno.disablePaths": [
+			"./packages/vscode-extension"
+		],
+		"typescript.preferences.includePackageJsonAutoImports": "auto",
+		"files.exclude": {
+			"**/node_modules": true,
+			"**/out": true,
+			"**/.vscode-test": true
+		}
+	},
     "extensions": {
       "recommendations": [
         "denoland.vscode-deno",
