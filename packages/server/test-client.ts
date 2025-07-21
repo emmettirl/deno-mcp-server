@@ -25,7 +25,8 @@ const initRequest = {
 };
 
 console.log("Sending initialize request...");
-await serverProcess.stdin.getWriter().write(
+const writer = serverProcess.stdin.getWriter();
+await writer.write(
   new TextEncoder().encode(JSON.stringify(initRequest) + "\n"),
 );
 
@@ -37,6 +38,7 @@ if (!done && value) {
   console.log("Response:", responseText);
 }
 
-// Close
-await serverProcess.stdin.getWriter().close();
+// Close streams
+await writer.close();
+reader.releaseLock();
 console.log("Server process finished with status:", (await serverProcess.status).code);
