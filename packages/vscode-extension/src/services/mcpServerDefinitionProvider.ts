@@ -116,7 +116,7 @@ export class DenoMcpServerDefinitionProvider
       }
 
       // Check if the assigned port is still available
-      const portArg = server.args?.find((arg, index, args) => args[index - 1] === "--port");
+      const portArg = server.args?.find((_arg, index, args) => args[index - 1] === "--port");
 
       if (portArg) {
         const port = parseInt(portArg);

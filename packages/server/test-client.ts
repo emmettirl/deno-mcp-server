@@ -3,13 +3,15 @@
 // Simple test client for the MCP server
 console.log("Testing MCP server communication...");
 
-const server = Deno.run({
-  cmd: ["deno", "run", "--allow-all", "src/main.ts"],
+const server = new Deno.Command("deno", {
+  args: ["run", "--allow-all", "src/main.ts"],
   cwd: ".",
   stdin: "piped",
   stdout: "piped",
   stderr: "piped",
 });
+
+const serverProcess = server.spawn();
 
 // Test initialize request
 const initRequest = {
@@ -23,16 +25,18 @@ const initRequest = {
 };
 
 console.log("Sending initialize request...");
-await server.stdin.write(new TextEncoder().encode(JSON.stringify(initRequest) + "\n"));
+await serverProcess.stdin.getWriter().write(
+  new TextEncoder().encode(JSON.stringify(initRequest) + "\n"),
+);
 
 // Read response
-const response = new Uint8Array(4096);
-const bytesRead = await server.stdout.read(response);
-if (bytesRead) {
-  const responseText = new TextDecoder().decode(response.subarray(0, bytesRead));
+const reader = serverProcess.stdout.getReader();
+const { value, done } = await reader.read();
+if (!done && value) {
+  const responseText = new TextDecoder().decode(value);
   console.log("Response:", responseText);
 }
 
 // Close
-server.stdin.close();
-server.close();
+await serverProcess.stdin.getWriter().close();
+console.log("Server process finished with status:", (await serverProcess.status).code);

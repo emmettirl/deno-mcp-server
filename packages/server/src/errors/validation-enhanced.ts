@@ -136,28 +136,9 @@ function isSystemPath(path: string): boolean {
     "/usr/bin",
     "/bin",
     "/sbin",
-    "C:\Windows",
-    "C:\Program Files",
-    "C:\System32",
-  ];
-
-  return SYSTEM_PATHS.some((systemPath) => path.startsWith(systemPath));
-}
-
-/**
- * Check if path is a system path
- */
-function isSystemPath(path: string): boolean {
-  const SYSTEM_PATHS = [
-    "/etc",
-    "/root",
-    "/var",
-    "/usr/bin",
-    "/bin",
-    "/sbin",
-    "C:\Windows",
-    "C:\Program Files",
-    "C:\System32",
+    "C:\\Windows",
+    "C:\\Program Files",
+    "C:\\System32",
   ];
 
   return SYSTEM_PATHS.some((systemPath) => path.startsWith(systemPath));

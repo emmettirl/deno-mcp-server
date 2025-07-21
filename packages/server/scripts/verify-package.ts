@@ -246,7 +246,7 @@ class PackageVerifier {
     console.log("================");
 
     let passed = 0;
-    let total = this.results.length;
+    const total = this.results.length;
 
     for (const result of this.results) {
       const icon = result.passed ? "✅" : "❌";

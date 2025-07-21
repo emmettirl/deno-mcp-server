@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { ChildProcess, spawn } from "child_process";
+import { Buffer } from "node:buffer";
 import { IMCPServerManager } from "../types";
 
 export class MCPServerManager implements IMCPServerManager {
@@ -146,6 +147,8 @@ export class MCPServerManager implements IMCPServerManager {
         `Failed to start Deno MCP server: ${errorMsg}`,
       );
     }
+
+    return Promise.resolve();
   }
 
   async stopServer(): Promise<void> {
@@ -161,6 +164,8 @@ export class MCPServerManager implements IMCPServerManager {
     this.mcpProcess = null;
     this.updateStatusBar("stopped");
     vscode.window.showInformationMessage("Deno MCP server stopped!");
+
+    return Promise.resolve();
   }
 
   showOutput(): void {

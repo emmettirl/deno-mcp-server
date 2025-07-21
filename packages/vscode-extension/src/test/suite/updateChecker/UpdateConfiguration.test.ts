@@ -144,7 +144,7 @@ suite("UpdateConfiguration Tests", () => {
       );
       const mockWorkspaceConfig = {
         get: sandbox.stub().callsFake((
-          key: string,
+          _key: string,
           defaultValue: any,
         ) => defaultValue),
       };

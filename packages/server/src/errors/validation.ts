@@ -482,6 +482,7 @@ export class SecurityValidator implements Validator {
   private readonly DANGEROUS_PATTERNS = [
     /\.\./, // Directory traversal
     /[;&|`$()<>]/, // Command injection
+    // deno-lint-ignore no-control-regex
     /[\x00-\x1f\x7f-\x9f]/, // Control characters
     /^[~\/]/, // Home/root directory access
   ];
@@ -499,6 +500,8 @@ export class SecurityValidator implements Validator {
   ];
 
   async validate(args: ToolArgs, context: ValidationContext): Promise<ValidationResult> {
+    await Promise.resolve(); // Make this properly async to satisfy lint requirements
+
     const errors: DenoMCPError[] = [];
     const warnings: DenoMCPError[] = [];
 
@@ -663,20 +666,4 @@ export function createDefaultValidationEngine(): ValidationEngine {
   engine.registerValidator(new RuntimeValidator());
 
   return engine;
-}
-
-/**
- * Legacy compatibility function for existing validation
- */
-export async function validateToolArgs(
-  args: ToolArgs,
-  toolName = "unknown",
-): Promise<{ valid: boolean; errors: string[] }> {
-  const engine = createDefaultValidationEngine();
-  const result = await engine.validate(args, { toolName });
-
-  return {
-    valid: result.valid,
-    errors: result.errors.map((error) => error.getUserSafeMessage()),
-  };
 }
